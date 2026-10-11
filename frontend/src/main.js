@@ -1,0 +1,15 @@
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import '@fontsource/cormorant-garamond/500.css'
+import '@fontsource/cormorant-garamond/600.css'
+import '@fontsource/cormorant-garamond/600-italic.css'
+import '@fontsource/manrope/400.css'
+import '@fontsource/manrope/500.css'
+import '@fontsource/manrope/600.css'
+import '@fontsource/manrope/700.css'
+import '@fontsource/great-vibes/400.css'
+import '@/shared/styles/global.scss'
+import App from './app/App.vue'
+import { router } from './app/router'
+
+createApp(App).use(createPinia()).use(router).mount('#app')

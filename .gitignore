@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.local
+*.log
+backend/data/*.db
+backend/data/*.db-*
+backend/server
+backend/server.exe
+.vscode/
+.idea/
+.DS_Store
