@@ -1,0 +1,63 @@
+{
+  "timezone": "Europe/Moscow",
+  "platforms": {
+    "ivi": { "title": "Иви", "url": "https://www.ivi.ru" },
+    "vk": { "title": "ВКонтакте", "url": "https://vk.com/turkdizionline" }
+  },
+  "shows": [
+    {
+      "id": "dalekiy-gorod",
+      "title": "Далекий город",
+      "translator": "Сабина",
+      "day": "monday",
+      "platform": "ivi",
+      "icon": "city",
+      "times": { "repeat": "20:00", "premiere": "21:00" }
+    },
+    {
+      "id": "eto-prosto-stambul",
+      "title": "Это просто Стамбул",
+      "translator": "Диана",
+      "day": "monday",
+      "platform": "vk",
+      "icon": "mosque",
+      "times": { "repeat": "20:00", "premiere": "21:00" }
+    },
+    {
+      "id": "pod-zemley",
+      "title": "Под землей",
+      "translator": "Диана",
+      "day": "wednesday",
+      "platform": "vk",
+      "icon": "layers",
+      "times": { "repeat": "20:00", "premiere": "21:00" }
+    },
+    {
+      "id": "lyubov-eto-ogon",
+      "title": "Любовь — это огонь",
+      "translator": "Севинч",
+      "day": "wednesday",
+      "platform": "vk",
+      "icon": "flame",
+      "times": { "repeat": "20:00", "premiere": "21:00" }
+    },
+    {
+      "id": "eto-more-perepolnitsya",
+      "title": "Это море переполнится",
+      "translator": "Диана",
+      "day": "friday",
+      "platform": "vk",
+      "icon": "wave",
+      "times": { "repeat": "20:00", "premiere": "21:00" }
+    },
+    {
+      "id": "rozy-i-grekhi",
+      "title": "Розы и грехи",
+      "translator": "Сабина",
+      "day": "saturday",
+      "platform": "ivi",
+      "icon": "rose",
+      "times": { "repeat": "20:00", "premiere": "21:00" }
+    }
+  ]
+}
