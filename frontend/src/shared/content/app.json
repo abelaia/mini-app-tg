@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "title": "Türk Dizi",
+    "script": "Online",
+    "monogram": "TD",
+    "tagline": "Онлайн-перевод турецких сериалов"
+  },
+  "clock": {
+    "zone": "МСК"
+  },
+  "state": {
+    "error": {
+      "title": "Не удалось загрузить",
+      "text": "Проверьте соединение и попробуйте ещё раз",
+      "action": "Повторить"
+    }
+  },
+  "duration": {
+    "hours": "ч",
+    "minutes": "мин"
+  },
+  "sheet": {
+    "close": "Закрыть"
+  }
+}

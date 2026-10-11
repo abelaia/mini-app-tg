@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "today": "Сегодня",
+    "week": "Неделя"
+  },
+  "days": {
+    "monday": {
+      "full": "Понедельник",
+      "short": "Пн"
+    },
+    "tuesday": {
+      "full": "Вторник",
+      "short": "Вт"
+    },
+    "wednesday": {
+      "full": "Среда",
+      "short": "Ср"
+    },
+    "thursday": {
+      "full": "Четверг",
+      "short": "Чт"
+    },
+    "friday": {
+      "full": "Пятница",
+      "short": "Пт"
+    },
+    "saturday": {
+      "full": "Суббота",
+      "short": "Сб"
+    },
+    "sunday": {
+      "full": "Воскресенье",
+      "short": "Вс"
+    }
+  },
+  "kinds": {
+    "repeat": {
+      "title": "Повтор прошлой серии",
+      "short": "Повтор",
+      "icon": "repeat",
+      "hint": "повтор"
+    },
+    "premiere": {
+      "title": "Новая серия",
+      "short": "Новая серия",
+      "icon": "sparkle",
+      "hint": "новая серия"
+    }
+  },
+  "kindOrder": [
+    "repeat",
+    "premiere"
+  ],
+  "status": {
+    "soon": "через {time}",
+    "live": "в эфире",
+    "done": "завершён"
+  },
+  "translator": "Перевод",
+  "tomorrow": "Завтра",
+  "today": {
+    "title": "Сегодня в эфире",
+    "empty": {
+      "title": "Сегодня без эфиров",
+      "text": "Ближайший эфир — {day}: «{title}» в {time}"
+    },
+    "upcoming": "Дальше на неделе",
+    "allWeek": "Вся неделя"
+  },
+  "week": {
+    "eyebrow": "Расписание",
+    "title": "Неделя эфиров",
+    "today": "сегодня",
+    "empty": "Без эфиров",
+    "hint": "Нажми на время, чтобы бот напомнил",
+    "notes": [
+      {
+        "icon": "repeat",
+        "text": "20:00 — повтор прошлой серии"
+      },
+      {
+        "icon": "sparkle",
+        "text": "21:00 — начало новой серии"
+      },
+      {
+        "icon": "clock",
+        "text": "Время московское"
+      }
+    ]
+  }
+}
