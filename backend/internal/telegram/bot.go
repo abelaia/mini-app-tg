@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -105,15 +108,15 @@ func (b *Bot) call(ctx context.Context, method string, payload, result any) erro
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("%s/bot%s/%s", b.baseURL, b.token, method)
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
+	endpoint := fmt.Sprintf("%s/bot%s/%s", b.baseURL, b.token, method)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := b.client.Do(req)
 	if err != nil {
-		return err
+		return b.redact(err)
 	}
 	defer resp.Body.Close()
 	var envelope struct {
@@ -139,4 +142,12 @@ func (b *Bot) call(ctx context.Context, method string, payload, result any) erro
 		return nil
 	}
 	return json.Unmarshal(envelope.Result, result)
+}
+
+func (b *Bot) redact(err error) error {
+	var urlErr *url.Error
+	if errors.As(err, &urlErr) {
+		urlErr.URL = strings.ReplaceAll(urlErr.URL, b.token, "<token>")
+	}
+	return err
 }

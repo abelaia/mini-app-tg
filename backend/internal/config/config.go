@@ -14,7 +14,7 @@ type Config struct {
 	Addr           string
 	BotToken       string
 	WebAppURL      string
-	DatabasePath   string
+	DatabaseURL    string
 	SchedulePath   string
 	StaticDir      string
 	AllowedOrigins []string
@@ -32,10 +32,10 @@ func Load() (Config, error) {
 	loadDotEnv(".env")
 	cfg := Config{
 		Env:            get("APP_ENV", "prod"),
-		Addr:           get("HTTP_ADDR", ":8080"),
+		Addr:           get("HTTP_ADDR", ":"+get("PORT", "8080")),
 		BotToken:       get("BOT_TOKEN", ""),
 		WebAppURL:      get("WEBAPP_URL", ""),
-		DatabasePath:   get("DATABASE_PATH", "data/app.db"),
+		DatabaseURL:    get("DATABASE_URL", ""),
 		SchedulePath:   get("SCHEDULE_PATH", "data/schedule.json"),
 		StaticDir:      get("STATIC_DIR", ""),
 		AllowedOrigins: split(get("ALLOWED_ORIGINS", "")),
@@ -43,6 +43,9 @@ func Load() (Config, error) {
 		RemindBefore:   duration("REMIND_BEFORE", 10*time.Minute),
 		BotPolling:     get("BOT_POLLING", "true") == "true",
 		DevUserID:      int64Value("DEV_USER_ID", 0),
+	}
+	if cfg.DatabaseURL == "" {
+		return cfg, errors.New("DATABASE_URL is required")
 	}
 	if cfg.BotToken == "" && !cfg.IsDev() {
 		return cfg, errors.New("BOT_TOKEN is required")

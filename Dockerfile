@@ -18,7 +18,6 @@ WORKDIR /app
 COPY --from=backend /server ./server
 COPY --from=frontend /app/dist ./public
 COPY backend/data/schedule.json ./data/schedule.json
-ENV APP_ENV=prod HTTP_ADDR=:8080 STATIC_DIR=/app/public DATABASE_PATH=/app/storage/app.db SCHEDULE_PATH=/app/data/schedule.json
-VOLUME /app/storage
+ENV APP_ENV=prod STATIC_DIR=/app/public SCHEDULE_PATH=/app/data/schedule.json
 EXPOSE 8080
 CMD ["./server"]

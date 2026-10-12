@@ -3,6 +3,7 @@ package telegram
 import (
 	"net/url"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
@@ -49,5 +50,14 @@ func TestValidateInitDataErrors(t *testing.T) {
 				t.Fatalf("got %v, want %v", err, tc.want)
 			}
 		})
+	}
+}
+
+func TestBotRedactsToken(t *testing.T) {
+	b := NewBot(testToken)
+	b.baseURL = "http://127.0.0.1:1"
+	err := b.call(t.Context(), "getMe", map[string]any{}, nil)
+	if err == nil || strings.Contains(err.Error(), testToken) {
+		t.Fatalf("token leaked or no error: %v", err)
 	}
 }
