@@ -3,6 +3,7 @@ services:
     name: turkdizi
     runtime: docker
     plan: free
+    region: frankfurt
     healthCheckPath: /api/health
     envVars:
       - key: APP_ENV

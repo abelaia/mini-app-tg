@@ -22,7 +22,7 @@ func Open(ctx context.Context, dsn string) (*sql.DB, error) {
 		return nil, fmt.Errorf("storage: open: %w", err)
 	}
 	db.SetMaxOpenConns(5)
-	db.SetConnMaxIdleTime(5 * time.Minute)
+	db.SetConnMaxIdleTime(time.Minute)
 	pingCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
 	if err := db.PingContext(pingCtx); err != nil {
