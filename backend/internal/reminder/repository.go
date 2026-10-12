@@ -31,7 +31,7 @@ func NewRepository(db *sql.DB) *Repository {
 func (r *Repository) List(ctx context.Context, userID int64) ([]Reminder, error) {
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, show_id, kind, created_at FROM reminders
-		WHERE user_id = ? ORDER BY created_at`, userID)
+		WHERE user_id = $1 ORDER BY created_at`, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -52,21 +52,21 @@ func (r *Repository) List(ctx context.Context, userID int64) ([]Reminder, error)
 func (r *Repository) Create(ctx context.Context, userID int64, showID string, kind schedule.Kind) (Reminder, error) {
 	now := time.Now().Unix()
 	if _, err := r.db.ExecContext(ctx, `
-		INSERT INTO reminders (user_id, show_id, kind, created_at) VALUES (?, ?, ?, ?)
+		INSERT INTO reminders (user_id, show_id, kind, created_at) VALUES ($1, $2, $3, $4)
 		ON CONFLICT (user_id, show_id, kind) DO NOTHING`, userID, showID, kind, now); err != nil {
 		return Reminder{}, err
 	}
 	rem := Reminder{ShowID: showID, Kind: kind}
 	var created int64
 	err := r.db.QueryRowContext(ctx, `
-		SELECT id, created_at FROM reminders WHERE user_id = ? AND show_id = ? AND kind = ?`,
+		SELECT id, created_at FROM reminders WHERE user_id = $1 AND show_id = $2 AND kind = $3`,
 		userID, showID, kind).Scan(&rem.ID, &created)
 	rem.CreatedAt = time.Unix(created, 0)
 	return rem, err
 }
 
 func (r *Repository) Delete(ctx context.Context, userID, id int64) (bool, error) {
-	res, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE id = ? AND user_id = ?`, id, userID)
+	res, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE id = $1 AND user_id = $2`, id, userID)
 	if err != nil {
 		return false, err
 	}
@@ -75,7 +75,7 @@ func (r *Repository) Delete(ctx context.Context, userID, id int64) (bool, error)
 }
 
 func (r *Repository) DeleteAll(ctx context.Context, userID int64) error {
-	_, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE user_id = ?`, userID)
+	_, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE user_id = $1`, userID)
 	return err
 }
 
@@ -83,9 +83,9 @@ func (r *Repository) Due(ctx context.Context, showID string, kind schedule.Kind,
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT r.id, r.user_id FROM reminders r
 		JOIN users u ON u.id = r.user_id
-		WHERE r.show_id = ? AND r.kind = ?
-			AND r.last_sent_at < ? AND r.created_at < ?
-			AND u.is_blocked = 0`,
+		WHERE r.show_id = $1 AND r.kind = $2
+			AND r.last_sent_at < $3 AND r.created_at < $4
+			AND NOT u.is_blocked`,
 		showID, kind, fireAt.Unix(), fireAt.Unix())
 	if err != nil {
 		return nil, err
@@ -103,6 +103,6 @@ func (r *Repository) Due(ctx context.Context, showID string, kind schedule.Kind,
 }
 
 func (r *Repository) MarkSent(ctx context.Context, id int64, at time.Time) error {
-	_, err := r.db.ExecContext(ctx, `UPDATE reminders SET last_sent_at = ? WHERE id = ?`, at.Unix(), id)
+	_, err := r.db.ExecContext(ctx, `UPDATE reminders SET last_sent_at = $1 WHERE id = $2`, at.Unix(), id)
 	return err
 }

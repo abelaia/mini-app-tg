@@ -2,15 +2,20 @@ package reminder
 
 import (
 	"context"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/abelaia/mini-app-tg/backend/internal/schedule"
-	"github.com/abelaia/mini-app-tg/backend/internal/storage"
+	"github.com/abelaia/mini-app-tg/backend/internal/storage/storagetest"
 	"github.com/abelaia/mini-app-tg/backend/internal/telegram"
 	"github.com/abelaia/mini-app-tg/backend/internal/user"
 )
+
+func TestMain(m *testing.M) {
+	os.Exit(storagetest.Run(m))
+}
 
 type fakeSender struct {
 	sent []telegram.Message
@@ -23,11 +28,7 @@ func (f *fakeSender) SendMessage(_ context.Context, msg telegram.Message) error 
 
 func TestNotifierSendsOncePerOccurrence(t *testing.T) {
 	ctx := context.Background()
-	db, err := storage.Open(ctx, filepath.Join(t.TempDir(), "test.db"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer db.Close()
+	db := storagetest.Open(t)
 
 	sched, err := schedule.Load(filepath.Join("..", "..", "data", "schedule.json"))
 	if err != nil {

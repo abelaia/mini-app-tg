@@ -2,7 +2,7 @@
 
 Расписание онлайн-переводов турецких сериалов и напоминания от бота перед эфиром.
 
-**Стек:** Vue 3, Pinia, Vite, SCSS · Go, SQLite, Telegram Bot API
+**Стек:** Vue 3, Pinia, Vite, SCSS · Go, PostgreSQL, Telegram Bot API
 
 ## Запуск
 
@@ -18,5 +18,5 @@ cd frontend && npm install && npm run dev
 
 ```bash
 docker build -t turkdizi .
-docker run -d -p 8080:8080 -v turkdizi-data:/app/storage -e BOT_TOKEN=... -e WEBAPP_URL=https://... turkdizi
+docker run -d -p 8080:8080 -e DATABASE_URL=... -e BOT_TOKEN=... -e WEBAPP_URL=https://... turkdizi
 ```

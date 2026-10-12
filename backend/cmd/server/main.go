@@ -40,7 +40,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	db, err := storage.Open(ctx, cfg.DatabasePath)
+	db, err := storage.Open(ctx, cfg.DatabaseURL)
 	if err != nil {
 		return err
 	}
