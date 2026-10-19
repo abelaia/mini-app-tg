@@ -10,3 +10,4 @@ backend/server.exe
 .DS_Store
 *.db
 *.db-*
+.pgdata/
