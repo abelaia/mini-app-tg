@@ -96,7 +96,7 @@ Mini App открывается только по HTTPS, поэтому лока
 | `ALLOWED_ORIGINS` | — | откуда разрешены запросы (CORS), через запятую |
 | `INIT_DATA_TTL` | `24h` | сколько живёт подпись Telegram |
 | `REMIND_BEFORE` | `10m` | за сколько до эфира присылать напоминание |
-| `BOT_POLLING` | `true` | бот сам получает сообщения (long polling) |
+| `BOT_MODE` | `auto` | `auto` - вебхук, если задан `WEBAPP_URL`, иначе long polling; можно явно `webhook` или `polling` |
 | `DEV_USER_ID` | `0` | тестовый пользователь для `APP_ENV=dev` |
 
 ## Тесты

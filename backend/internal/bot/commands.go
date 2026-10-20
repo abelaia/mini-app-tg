@@ -2,8 +2,13 @@ package bot
 
 import (
 	"context"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"log/slog"
+	"net/http"
 	"strings"
 	"time"
 
@@ -22,8 +27,39 @@ type Commands struct {
 	webAppURL string
 }
 
+const WebhookPath = "/api/telegram/webhook"
+
 func NewCommands(bot *telegram.Bot, users UserSaver, webAppURL string) *Commands {
 	return &Commands{bot: bot, users: users, webAppURL: webAppURL}
+}
+
+func WebhookSecret(token string) string {
+	sum := sha256.Sum256([]byte("webhook:" + token))
+	return hex.EncodeToString(sum[:16])
+}
+
+func (c *Commands) WebhookHandler(secret string) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		got := req.Header.Get("X-Telegram-Bot-Api-Secret-Token")
+		if subtle.ConstantTimeCompare([]byte(got), []byte(secret)) != 1 {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		var u telegram.Update
+		if err := json.NewDecoder(http.MaxBytesReader(w, req.Body, 1<<20)).Decode(&u); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		c.handle(req.Context(), u)
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func (c *Commands) RunPolling(ctx context.Context) {
+	if err := c.bot.DeleteWebhook(ctx); err != nil {
+		slog.Warn("delete webhook", "err", err)
+	}
+	c.Run(ctx)
 }
 
 func (c *Commands) Run(ctx context.Context) {

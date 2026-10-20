@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 	_ "time/tzdata"
@@ -73,8 +74,18 @@ func run() error {
 			WebAppURL: cfg.WebAppURL,
 		})
 		go notifier.Run(ctx)
-		if cfg.BotPolling {
-			go bot.NewCommands(tg, users, cfg.WebAppURL).Run(ctx)
+		commands := bot.NewCommands(tg, users, cfg.WebAppURL)
+		if cfg.UseWebhook() {
+			secret := bot.WebhookSecret(cfg.BotToken)
+			router.Public("POST "+bot.WebhookPath, commands.WebhookHandler(secret))
+			if err := tg.SetWebhook(ctx, strings.TrimRight(cfg.WebAppURL, "/")+bot.WebhookPath, secret); err != nil {
+				slog.Error("set webhook", "err", err)
+			}
+			go keepAlive(ctx, cfg.WebAppURL+"/api/health", 10*time.Minute)
+			slog.Info("bot mode: webhook")
+		} else {
+			go commands.RunPolling(ctx)
+			slog.Info("bot mode: polling")
 		}
 	} else {
 		slog.Warn("BOT_TOKEN is empty: notifications and bot commands are disabled")
@@ -101,4 +112,27 @@ func run() error {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	return srv.Shutdown(shutdownCtx)
+}
+
+func keepAlive(ctx context.Context, url string, every time.Duration) {
+	client := &http.Client{Timeout: 30 * time.Second}
+	ticker := time.NewTicker(every)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+			if err != nil {
+				return
+			}
+			resp, err := client.Do(req)
+			if err != nil {
+				slog.Warn("keep alive", "err", err)
+				continue
+			}
+			resp.Body.Close()
+		}
+	}
 }
