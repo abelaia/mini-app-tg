@@ -103,6 +103,18 @@ func (b *Bot) GetUpdates(ctx context.Context, offset int64, timeout time.Duratio
 	return updates, err
 }
 
+func (b *Bot) SetWebhook(ctx context.Context, url, secret string) error {
+	return b.call(ctx, "setWebhook", map[string]any{
+		"url":             url,
+		"secret_token":    secret,
+		"allowed_updates": []string{"message"},
+	}, nil)
+}
+
+func (b *Bot) DeleteWebhook(ctx context.Context) error {
+	return b.call(ctx, "deleteWebhook", map[string]any{}, nil)
+}
+
 func (b *Bot) call(ctx context.Context, method string, payload, result any) error {
 	body, err := json.Marshal(payload)
 	if err != nil {

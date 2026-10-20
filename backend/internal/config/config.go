@@ -20,12 +20,19 @@ type Config struct {
 	AllowedOrigins []string
 	InitDataTTL    time.Duration
 	RemindBefore   time.Duration
-	BotPolling     bool
+	BotMode        string
 	DevUserID      int64
 }
 
 func (c Config) IsDev() bool {
 	return c.Env == "dev"
+}
+
+func (c Config) UseWebhook() bool {
+	if c.BotMode == "auto" {
+		return c.WebAppURL != ""
+	}
+	return c.BotMode == "webhook"
 }
 
 func Load() (Config, error) {
@@ -41,7 +48,7 @@ func Load() (Config, error) {
 		AllowedOrigins: split(get("ALLOWED_ORIGINS", "")),
 		InitDataTTL:    duration("INIT_DATA_TTL", 24*time.Hour),
 		RemindBefore:   duration("REMIND_BEFORE", 10*time.Minute),
-		BotPolling:     get("BOT_POLLING", "true") == "true",
+		BotMode:        get("BOT_MODE", "auto"),
 		DevUserID:      int64Value("DEV_USER_ID", 0),
 	}
 	if cfg.DatabaseURL == "" {
