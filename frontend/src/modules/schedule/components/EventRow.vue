@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import BaseIcon from '@/shared/ui/BaseIcon.vue'
+import BrandMark from '@/shared/ui/BrandMark.vue'
 import ReminderBell from '@/modules/reminders/components/ReminderBell.vue'
 import { mod } from '@/shared/lib/text'
 import content from '../content.json'
@@ -22,7 +22,7 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
     <span class="event__time">{{ clock }}</span>
     <div class="event__body">
       <span class="event__title">
-        <BaseIcon :name="meta.icon" :size="14" />
+        <BrandMark class="event__mark" :name="meta.icon" :size="34" />
         {{ meta.short }}
       </span>
       <span v-if="status" class="event__status">{{ status.label }}</span>
@@ -62,10 +62,14 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
   &__title {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     font-size: var(--fs-sm);
     font-weight: 600;
     white-space: nowrap;
+  }
+
+  &__mark {
+    margin-left: -4px;
   }
 
   &__status {

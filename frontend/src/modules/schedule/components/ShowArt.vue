@@ -23,25 +23,28 @@ const props = defineProps({
   background: var(--color-surface-muted);
 
   &--photo {
-    aspect-ratio: 16 / 11;
+    aspect-ratio: 16 / 12;
     border-radius: var(--radius-md);
-    box-shadow: inset 0 0 0 var(--border-hairline) var(--color-line);
+    background:
+      radial-gradient(120% 90% at 50% 30%, var(--color-surface) 0%, var(--color-surface-muted) 70%);
   }
 
   &--medallion {
-    width: 52px;
-    height: 52px;
+    width: 64px;
+    height: 64px;
     flex-shrink: 0;
     border-radius: 50%;
     border: var(--border-hairline) solid var(--color-line);
     box-shadow: 0 8px 18px -12px var(--color-shadow);
+    background: var(--color-surface);
   }
 
   &__image {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    padding: 4%;
   }
 }
 </style>
