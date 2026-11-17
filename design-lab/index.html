@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#e7dfd4" />
+    <title>Три настроения · TürkDiziOnline</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="top__copy">
+        <p class="top__kicker">TürkDiziOnline</p>
+        <h1>Три настроения</h1>
+        <p class="top__lead">
+          Одно и то же расписание. Посмотри, в каком приятнее задерживаться. Нажми на время — так включается напоминание за 10 минут, как у бота.
+        </p>
+      </div>
+      <div class="switch" role="tablist" aria-label="Настроение">
+        <button type="button" data-pick="velvet" aria-pressed="true">Бархат</button>
+        <button type="button" data-pick="ceramic" aria-pressed="false">Керамика</button>
+        <button type="button" data-pick="poster" aria-pressed="false">Афиша</button>
+      </div>
+    </header>
+    <main class="gallery">
+      <section class="column is-on" data-look="velvet">
+        <div class="column__meta">
+          <h2>Бархат</h2>
+          <p>Вечерний. Тёмная комната, серия как поход в кино. Ближе тем, кто открывает уже в темноте.</p>
+        </div>
+        <div class="phone" data-phone="velvet"></div>
+      </section>
+      <section class="column" data-look="ceramic">
+        <div class="column__meta">
+          <h2>Керамика</h2>
+          <p>Дневной. Светло и спокойно, можно зайти между делами и сразу увидеть свой вечер.</p>
+        </div>
+        <div class="phone" data-phone="ceramic"></div>
+      </section>
+      <section class="column" data-look="poster">
+        <div class="column__meta">
+          <h2>Афиша</h2>
+          <p>Яркий. День, название и час читаются с первого взгляда, без лишнего украшения.</p>
+        </div>
+        <div class="phone" data-phone="poster"></div>
+      </section>
+    </main>
+    <p class="footnote">Макеты для выбора. В боте пока прежний вид. Баннер на экране «Сегодня» — пример того места, куда потом встанет анонс.</p>
+    <script src="app.js"></script>
+  </body>
+</html>
