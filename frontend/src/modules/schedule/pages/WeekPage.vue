@@ -1,6 +1,6 @@
 <script setup>
 import AsyncState from '@/shared/ui/AsyncState.vue'
-import BaseIcon from '@/shared/ui/BaseIcon.vue'
+import BrandMark from '@/shared/ui/BrandMark.vue'
 import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import { useNow } from '@/shared/composables/useNow'
 import { WEEK } from '@/shared/lib/time'
@@ -21,8 +21,8 @@ const { zoned } = useNow()
       </div>
       <ul class="week__notes">
         <li v-for="note in content.week.notes" :key="note.text" class="week__note">
-          <BaseIcon :name="note.icon" :size="16" />
-          {{ note.text }}
+          <BrandMark class="week__note-mark" :name="note.icon" :size="44" />
+          <span>{{ note.text }}</span>
         </li>
       </ul>
     </AsyncState>
@@ -44,7 +44,7 @@ const { zoned } = useNow()
   &__notes {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-3);
     padding: var(--space-4);
     border-radius: var(--radius-lg);
     background: var(--color-sage-soft);
@@ -54,9 +54,14 @@ const { zoned } = useNow()
   &__note {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
     font-size: var(--fs-sm);
-    font-weight: 500;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  &__note-mark {
+    flex-shrink: 0;
   }
 }
 </style>
