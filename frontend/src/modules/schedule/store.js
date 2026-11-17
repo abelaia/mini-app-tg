@@ -16,17 +16,26 @@ export const useScheduleStore = defineStore('schedule', () => {
 
   const platformOf = (show) => platforms.value[show.platform] ?? { title: show.platform, url: '' }
 
+  async function apply(data) {
+    shows.value = data.shows
+    platforms.value = data.platforms
+    timezone.value = data.timezone
+    remindBeforeMinutes.value = data.remindBeforeMinutes
+    status.value = 'ready'
+  }
+
   async function load() {
     status.value = 'loading'
     try {
-      const data = await http.get('/api/schedule')
-      shows.value = data.shows
-      platforms.value = data.platforms
-      timezone.value = data.timezone
-      remindBeforeMinutes.value = data.remindBeforeMinutes
-      status.value = 'ready'
+      await apply(await http.get('/api/schedule'))
     } catch {
-      status.value = 'error'
+      try {
+        const response = await fetch(`${import.meta.env.BASE_URL}assets/schedule.json`)
+        if (!response.ok) throw new Error('sample schedule missing')
+        await apply(await response.json())
+      } catch {
+        status.value = 'error'
+      }
     }
   }
 
