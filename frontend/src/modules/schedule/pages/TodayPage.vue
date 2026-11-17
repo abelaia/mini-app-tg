@@ -7,6 +7,7 @@ import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import { useNow } from '@/shared/composables/useNow'
 import { fill } from '@/shared/lib/text'
 import { shiftDay } from '@/shared/lib/time'
+import PromoBanner from '../components/PromoBanner.vue'
 import ShowPolaroid from '../components/ShowPolaroid.vue'
 import ShowRow from '../components/ShowRow.vue'
 import content from '../content.json'
@@ -41,9 +42,10 @@ const eyebrow = computed(() => `${content.days[zoned.value.day].full}, ${dateLab
 <template>
   <section class="today">
     <SectionHeading :eyebrow="eyebrow" :title="content.today.title" />
+    <PromoBanner />
     <AsyncState :status="schedule.status" @retry="schedule.load">
       <div v-if="todayShows.length" :class="['today__stack', { 'today__stack--carousel': todayShows.length > 1 }]">
-        <ShowPolaroid v-for="(show, i) in todayShows" :key="show.id" class="today__card" :show="show" :now-minutes="zoned.minutes" :tilt="i % 2 ? 1.2 : -1.2" :style="{ animationDelay: `${i * 90}ms` }" />
+        <ShowPolaroid v-for="(show, i) in todayShows" :key="show.id" class="today__card" :show="show" :now-minutes="zoned.minutes" :style="{ animationDelay: `${i * 90}ms` }" />
       </div>
       <EmptyState v-else icon="rose" :title="content.today.empty.title" :text="emptyText" />
       <div v-if="upcoming.length" class="today__upcoming">

@@ -1,14 +1,14 @@
 <script setup>
 import app from '@/shared/content/app.json'
 import { useNow } from '@/shared/composables/useNow'
-import BrandMonogram from './BrandMonogram.vue'
+import { brandAvatar } from '@/shared/lib/media'
 
 const { zoned } = useNow()
 </script>
 
 <template>
   <header class="header">
-    <BrandMonogram class="header__logo" :size="44" />
+    <img class="header__logo" :src="brandAvatar" width="44" height="44" alt="" decoding="async" />
     <div class="header__brand">
       <span class="header__title">{{ app.brand.title }}</span>
       <span class="header__script">{{ app.brand.script }}</span>
@@ -27,6 +27,13 @@ const { zoned } = useNow()
   gap: var(--space-3);
   min-height: var(--header-height);
   padding: calc(var(--safe-top) + var(--space-3)) var(--gutter) var(--space-2);
+
+  &__logo {
+    flex-shrink: 0;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 8px 20px -12px var(--color-shadow);
+    object-fit: cover;
+  }
 
   &__brand {
     position: relative;

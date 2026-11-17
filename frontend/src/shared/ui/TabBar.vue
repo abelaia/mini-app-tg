@@ -12,7 +12,7 @@ defineProps({
     <div class="tabbar__inner">
       <RouterLink v-for="item in items" :key="item.to" :to="item.to" class="tabbar__item" active-class="" exact-active-class="tabbar__item--active" @click="haptic.select()">
         <span class="tabbar__icon-wrap">
-          <BaseIcon class="tabbar__icon" :name="item.icon" :size="22" />
+          <BaseIcon class="tabbar__icon" :name="item.icon" :size="26" />
           <span v-if="item.badge?.()" class="tabbar__badge">{{ item.badge() }}</span>
         </span>
         <span class="tabbar__label">{{ item.label }}</span>

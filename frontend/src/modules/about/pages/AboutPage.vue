@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import BaseIcon from '@/shared/ui/BaseIcon.vue'
-import BrandMonogram from '@/shared/ui/BrandMonogram.vue'
+import { brandAvatar } from '@/shared/lib/media'
 import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import { haptic, openLink } from '@/shared/telegram/telegram'
 import { useScheduleStore } from '@/modules/schedule/store'
@@ -30,7 +30,7 @@ function open(url) {
 <template>
   <section class="about">
     <div class="about__hero">
-      <BrandMonogram :size="84" />
+      <img class="about__avatar" :src="brandAvatar" width="120" height="120" alt="" decoding="async" />
       <h2 class="about__name">{{ content.hero.name }}</h2>
       <p class="about__tagline">{{ content.hero.tagline }}</p>
       <p class="about__text">{{ content.hero.text }}</p>
@@ -94,6 +94,14 @@ function open(url) {
     > * {
       position: relative;
     }
+  }
+
+  &__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+    box-shadow: 0 16px 36px -20px var(--color-shadow);
   }
 
   &__name {

@@ -6,10 +6,9 @@ import { useScheduleStore } from '../store'
 import EventRow from './EventRow.vue'
 import ShowArt from './ShowArt.vue'
 
-const props = defineProps({
+defineProps({
   show: { type: Object, required: true },
   nowMinutes: { type: Number, default: null },
-  tilt: { type: Number, default: 0 },
 })
 
 const schedule = useScheduleStore()
@@ -17,7 +16,7 @@ const platform = computed(() => schedule.platformOf(props.show))
 </script>
 
 <template>
-  <article class="polaroid" :style="{ '--tilt': `${tilt}deg` }">
+  <article class="polaroid">
     <ShowArt class="polaroid__photo" :show="show">
       <span class="polaroid__platform">{{ platform.title }}</span>
     </ShowArt>
@@ -37,25 +36,12 @@ const platform = computed(() => schedule.platformOf(props.show))
 <style lang="scss">
 .polaroid {
   position: relative;
-  padding: var(--space-3) var(--space-3) var(--space-2);
-  background: var(--color-paper);
-  border-radius: var(--radius-xs);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 24px 48px -24px var(--color-shadow);
-  transform: rotate(var(--tilt));
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: var(--border-hairline) solid var(--color-line);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 40px -28px var(--color-shadow);
   animation: polaroid-drop var(--duration-slow) var(--ease-spring) both;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    width: 84px;
-    height: 22px;
-    background: rgba(236, 222, 190, 0.7);
-    transform: translateX(-50%) rotate(-3deg);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    z-index: 1;
-  }
 
   &__platform {
     position: absolute;
@@ -80,7 +66,7 @@ const platform = computed(() => schedule.platformOf(props.show))
     font-size: var(--fs-xxl);
     font-weight: 600;
     line-height: 1.02;
-    color: var(--color-paper-ink);
+    color: var(--color-ink);
   }
 
   &__translator {
@@ -89,7 +75,7 @@ const platform = computed(() => schedule.platformOf(props.show))
     gap: 6px;
     margin-top: var(--space-2);
     font-size: var(--fs-sm);
-    color: var(--color-paper-muted);
+    color: var(--color-ink-muted);
   }
 
   &__events {
@@ -100,7 +86,7 @@ const platform = computed(() => schedule.platformOf(props.show))
 @keyframes polaroid-drop {
   from {
     opacity: 0;
-    transform: translateY(24px) rotate(calc(var(--tilt) * 3));
+    transform: translateY(16px);
   }
 }
 </style>
