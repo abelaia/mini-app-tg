@@ -37,10 +37,10 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) 0;
-  color: var(--color-paper-ink);
+  color: var(--color-ink);
 
   & + & {
-    border-top: var(--border-hairline) dashed var(--color-paper-line);
+    border-top: var(--border-hairline) dashed var(--color-line);
   }
 
   &__time {
@@ -70,14 +70,14 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
 
   &__status {
     font-size: var(--fs-xs);
-    color: var(--color-paper-muted);
+    color: var(--color-ink-muted);
   }
 
   &--live &__status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--color-photo-rose-b);
+    color: var(--color-rose);
     font-weight: 700;
 
     &::before {

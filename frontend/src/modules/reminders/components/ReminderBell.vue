@@ -47,8 +47,8 @@ const text = computed(() => props.label || (active.value ? content.bell.on : con
     padding: 0 var(--space-3) 0 10px;
     font-size: var(--fs-xs);
     background: transparent;
-    color: var(--color-paper-ink);
-    box-shadow: inset 0 0 0 var(--border-hairline) var(--color-paper-line);
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 var(--border-hairline) var(--color-line);
   }
 
   &--chip {
