@@ -6,7 +6,7 @@ import { useScheduleStore } from '../store'
 import EventRow from './EventRow.vue'
 import ShowArt from './ShowArt.vue'
 
-defineProps({
+const props = defineProps({
   show: { type: Object, required: true },
   nowMinutes: { type: Number, default: null },
 })

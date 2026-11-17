@@ -23,7 +23,8 @@ export const useRemindersStore = defineStore('reminders', () => {
       items.value = await http.get('/api/reminders')
       status.value = 'ready'
     } catch {
-      status.value = 'error'
+      items.value = []
+      status.value = 'ready'
     }
   }
 
