@@ -2,11 +2,10 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { http } from '@/shared/api/http'
 
-const devAdmin = () => import.meta.env.DEV && import.meta.env.VITE_DEV_ADMIN === '1'
-
 export const useSessionStore = defineStore('session', () => {
   const user = ref(null)
-  const isAdmin = ref(devAdmin())
+  // Локально сразу считаем админом, чтобы вкладка и /#/admin открывались без танцев.
+  const isAdmin = ref(Boolean(import.meta.env.DEV))
   const status = ref('idle')
   const backendUp = ref(false)
 
@@ -17,12 +16,12 @@ export const useSessionStore = defineStore('session', () => {
     try {
       const data = await http.post('/api/session')
       user.value = data?.user ?? data ?? null
-      isAdmin.value = Boolean(data?.isAdmin) || devAdmin()
+      isAdmin.value = Boolean(data?.isAdmin) || Boolean(import.meta.env.DEV)
       backendUp.value = true
       status.value = 'ready'
     } catch {
       user.value = null
-      isAdmin.value = devAdmin()
+      isAdmin.value = Boolean(import.meta.env.DEV)
       backendUp.value = false
       status.value = 'ready'
       if (import.meta.env.DEV) {
