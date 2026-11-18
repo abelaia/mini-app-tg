@@ -36,18 +36,19 @@ const emptyText = computed(() => {
   return fill(content.today.empty.text, { day: next.caption.toLowerCase(), title: next.show.title, time: next.show.times.premiere })
 })
 
-const eyebrow = computed(() => `${content.days[zoned.value.day].full}, ${dateLabel.value}`)
+const dateLine = computed(() => `${content.days[zoned.value.day].full}, ${dateLabel.value}`)
 </script>
 
 <template>
   <section class="today">
-    <SectionHeading :eyebrow="eyebrow" :title="content.today.title" />
-    <PromoBanner />
+    <SectionHeading script :title="content.today.title" :text="dateLine" />
+    <p class="today__hint">{{ content.today.hint }}</p>
     <AsyncState :status="schedule.status" @retry="schedule.load">
-      <div v-if="todayShows.length" :class="['today__stack', { 'today__stack--carousel': todayShows.length > 1 }]">
-        <ShowPolaroid v-for="(show, i) in todayShows" :key="show.id" class="today__card" :show="show" :now-minutes="zoned.minutes" :style="{ animationDelay: `${i * 90}ms` }" />
+      <div v-if="todayShows.length" class="today__stack">
+        <ShowPolaroid v-for="show in todayShows" :key="show.id" :show="show" :now-minutes="zoned.minutes" />
       </div>
       <EmptyState v-else icon="rose" :title="content.today.empty.title" :text="emptyText" />
+      <PromoBanner />
       <div v-if="upcoming.length" class="today__upcoming">
         <SectionHeading :title="content.today.upcoming">
           <RouterLink to="/week">
@@ -66,28 +67,18 @@ const eyebrow = computed(() => `${content.days[zoned.value.day].full}, ${dateLab
 .today {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
+
+  &__hint {
+    margin-top: calc(var(--space-3) * -1);
+    font-size: var(--fs-sm);
+    color: var(--color-ink-soft);
+  }
 
   &__stack {
     display: flex;
     flex-direction: column;
-    padding-top: var(--space-3);
-
-    &--carousel {
-      @include no-scrollbar;
-      flex-direction: row;
-      gap: var(--space-4);
-      margin: 0 calc(var(--gutter) * -1);
-      padding: var(--space-4) var(--gutter) var(--space-6);
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scroll-padding-inline: var(--gutter);
-
-      .today__card {
-        flex: 0 0 86%;
-        scroll-snap-align: start;
-      }
-    }
+    gap: var(--space-4);
   }
 
   &__upcoming {
@@ -96,7 +87,8 @@ const eyebrow = computed(() => `${content.days[zoned.value.day].full}, ${dateLab
     gap: var(--space-4);
 
     .heading__title {
-      font-size: var(--fs-xl);
+      font-family: var(--font-sans);
+      font-size: var(--fs-lg);
     }
   }
 

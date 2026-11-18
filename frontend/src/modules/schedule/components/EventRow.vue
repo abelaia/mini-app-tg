@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue'
-import BrandMark from '@/shared/ui/BrandMark.vue'
 import ReminderBell from '@/modules/reminders/components/ReminderBell.vue'
 import { mod } from '@/shared/lib/text'
 import content from '../content.json'
@@ -10,24 +9,22 @@ const props = defineProps({
   show: { type: Object, required: true },
   kind: { type: String, required: true },
   nowMinutes: { type: Number, default: null },
+  quiet: { type: Boolean, default: false },
 })
 
 const clock = computed(() => props.show.times[props.kind])
 const meta = computed(() => content.kinds[props.kind])
-const status = computed(() => (props.nowMinutes === null ? null : eventStatus(clock.value, props.nowMinutes)))
+const status = computed(() => (props.nowMinutes === null ? null : eventStatus(clock.value, props.nowMinutes, props.kind)))
 </script>
 
 <template>
-  <li :class="mod('event', { [status?.state]: Boolean(status) })">
+  <li :class="mod('event', { [status?.state]: Boolean(status), quiet })">
     <span class="event__time">{{ clock }}</span>
     <div class="event__body">
-      <span class="event__title">
-        <BrandMark class="event__mark" :name="meta.icon" :size="34" />
-        {{ meta.short }}
-      </span>
+      <span class="event__title">{{ meta.short }}</span>
       <span v-if="status" class="event__status">{{ status.label }}</span>
     </div>
-    <ReminderBell :show-id="show.id" :kind="kind" />
+    <ReminderBell :show-id="show.id" :kind="kind" :variant="quiet ? 'quiet' : 'pill'" />
   </li>
 </template>
 
@@ -44,11 +41,23 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
   }
 
   &__time {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: var(--fs-xl);
     font-weight: 600;
     line-height: 1;
     font-variant-numeric: tabular-nums;
+  }
+
+  &--quiet &__time {
+    font-size: var(--fs-md);
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+
+  &--quiet &__title,
+  &--quiet &__status {
+    color: var(--color-ink-muted);
+    font-weight: 500;
   }
 
   &__body {
@@ -68,10 +77,6 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
     white-space: nowrap;
   }
 
-  &__mark {
-    margin-left: -4px;
-  }
-
   &__status {
     font-size: var(--fs-xs);
     color: var(--color-ink-muted);
@@ -82,7 +87,7 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
     align-items: center;
     gap: 6px;
     color: var(--color-rose);
-    font-weight: 700;
+    font-weight: 600;
 
     &::before {
       content: '';
@@ -90,7 +95,6 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
       height: 7px;
       border-radius: 50%;
       background: currentColor;
-      animation: live-pulse 1.6s ease-in-out infinite;
     }
   }
 
@@ -100,10 +104,4 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
   }
 }
 
-@keyframes live-pulse {
-  50% {
-    opacity: 0.3;
-    transform: scale(0.7);
-  }
-}
 </style>

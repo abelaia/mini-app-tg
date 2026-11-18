@@ -13,7 +13,6 @@ const promo = computed(() => schedule.promo ?? content.promo)
   <aside v-if="promo?.text" class="promo">
     <img class="promo__image" :src="promoBanner" alt="" decoding="async" />
     <div class="promo__copy">
-      <span class="promo__eyebrow">{{ promo.eyebrow || content.promo.eyebrow }}</span>
       <p class="promo__text">{{ promo.text }}</p>
     </div>
   </aside>
@@ -46,11 +45,6 @@ const promo = computed(() => schedule.promo ?? content.promo)
     gap: var(--space-2);
     padding: var(--space-4);
     background: color-mix(in srgb, var(--color-surface) 92%, var(--color-ink));
-  }
-
-  &__eyebrow {
-    @include eyebrow;
-    color: var(--color-rose);
   }
 
   &__text {

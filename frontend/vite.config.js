@@ -6,7 +6,12 @@ export default defineConfig({
   base: './',
   plugins: [vue()],
   resolve: {
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@fontsource/source-serif-4': fileURLToPath(new URL('./node_modules/@fontsource/source-serif-4', import.meta.url)),
+      '@fontsource/source-sans-3': fileURLToPath(new URL('./node_modules/@fontsource/source-sans-3', import.meta.url)),
+      '@fontsource/great-vibes': fileURLToPath(new URL('./node_modules/@fontsource/great-vibes', import.meta.url)),
+    },
   },
   css: {
     preprocessorOptions: {

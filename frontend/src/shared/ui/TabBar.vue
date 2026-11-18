@@ -38,10 +38,9 @@ defineProps({
     margin: 0 auto;
     padding: var(--space-1);
     border-radius: var(--radius-xl);
-    background: var(--color-surface-glass);
+    background: var(--color-surface);
     border: var(--border-hairline) solid var(--color-line);
-    box-shadow: 0 20px 40px -20px var(--color-shadow);
-    backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow: 0 10px 24px -16px var(--color-shadow);
     pointer-events: auto;
   }
 
@@ -78,16 +77,15 @@ defineProps({
     border-radius: var(--radius-pill);
     background: var(--color-rose);
     color: var(--color-cream);
-    font-size: 10px;
+    font-size: var(--fs-xxs);
     font-weight: 700;
     line-height: 16px;
     text-align: center;
   }
 
   &__label {
-    font-size: var(--fs-xxs);
+    font-size: var(--fs-xs);
     font-weight: 600;
-    letter-spacing: 0.02em;
   }
 }
 </style>
