@@ -52,11 +52,20 @@ const text = computed(() => props.label || (active.value ? content.bell.on : con
   }
 
   &--chip {
-    height: 30px;
-    padding: 0 10px 0 8px;
-    font-size: var(--fs-xs);
+    height: 34px;
+    padding: 0 12px 0 10px;
+    font-size: var(--fs-sm);
     background: var(--color-surface-muted);
-    color: var(--color-ink-soft);
+    color: var(--color-ink);
+  }
+
+  &--quiet {
+    height: 32px;
+    padding: 0;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--color-ink-muted);
+    background: transparent;
   }
 
   &--active {

@@ -82,18 +82,6 @@ function open(url) {
     padding: var(--space-7) var(--space-5) var(--space-6);
     text-align: center;
     overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0 0 auto;
-      height: 96px;
-      background: linear-gradient(180deg, var(--color-sage-soft), transparent);
-    }
-
-    > * {
-      position: relative;
-    }
   }
 
   &__avatar {
@@ -113,10 +101,12 @@ function open(url) {
   }
 
   &__tagline {
-    margin-top: var(--space-1);
-    font-family: var(--font-script);
-    font-size: var(--fs-xl);
-    color: var(--color-rose);
+    margin-top: var(--space-2);
+    max-width: 28ch;
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    line-height: 1.4;
+    color: var(--color-ink-soft);
   }
 
   &__text {
@@ -189,10 +179,10 @@ function open(url) {
   }
 
   &__title {
-    font-family: var(--font-serif);
-    font-size: var(--fs-xl);
+    font-family: var(--font-sans);
+    font-size: var(--fs-lg);
     font-weight: 600;
-    line-height: 1;
+    line-height: 1.15;
   }
 
   &__icon {

@@ -48,8 +48,7 @@ const { zoned } = useNow()
     font-size: var(--fs-xl);
     font-weight: 600;
     line-height: 1;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--color-ink);
   }
 
@@ -69,13 +68,12 @@ const { zoned } = useNow()
     align-items: flex-end;
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
-    background: var(--color-surface-glass);
+    background: var(--color-surface);
     border: var(--border-hairline) solid var(--color-line);
-    backdrop-filter: blur(12px);
   }
 
   &__time {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: var(--fs-lg);
     font-weight: 600;
     line-height: 1;
@@ -83,9 +81,9 @@ const { zoned } = useNow()
   }
 
   &__zone {
-    @include eyebrow;
-    font-size: var(--fs-xxs);
-    color: var(--color-ink-muted);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--color-ink-soft);
   }
 }
 </style>

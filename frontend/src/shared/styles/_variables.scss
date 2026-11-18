@@ -59,14 +59,14 @@ $colors-static: (
 );
 
 $fonts: (
-  serif: "'Cormorant Garamond', 'Times New Roman', serif",
-  sans: "'Manrope', -apple-system, 'Segoe UI', Roboto, sans-serif",
+  serif: "'Source Serif 4', 'Times New Roman', serif",
+  sans: "'Source Sans 3', -apple-system, 'Segoe UI', Roboto, sans-serif",
   script: "'Great Vibes', cursive",
 );
 
 $font-sizes: (
-  xxs: fluid(10, 11),
-  xs: fluid(11, 12),
+  xxs: fluid(12, 12),
+  xs: fluid(12, 13),
   sm: fluid(13, 14),
   md: fluid(15, 16),
   lg: fluid(18, 20),
@@ -90,9 +90,9 @@ $spaces: (
 $radii: (
   xs: 6px,
   sm: 10px,
-  md: 16px,
-  lg: 22px,
-  xl: 28px,
+  md: 12px,
+  lg: 12px,
+  xl: 16px,
   pill: 999px,
 );
 
@@ -107,7 +107,7 @@ $tokens: (
   duration-base: 260ms,
   duration-slow: 480ms,
   ease-out: cubic-bezier(0.22, 1, 0.36, 1),
-  ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1),
+  ease-spring: cubic-bezier(0.22, 1, 0.36, 1),
   z-tabbar: 10,
   z-sheet: 15,
   z-toast: 20,

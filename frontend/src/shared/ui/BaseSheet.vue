@@ -6,7 +6,6 @@ import BaseIcon from './BaseIcon.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
-  eyebrow: { type: String, default: '' },
   title: { type: String, required: true },
 })
 
@@ -50,7 +49,6 @@ onBeforeUnmount(() => props.open && unlock())
           <span class="sheet__handle" />
           <header class="sheet__head">
             <div class="sheet__titles">
-              <span v-if="eyebrow" class="sheet__eyebrow">{{ eyebrow }}</span>
               <h2 class="sheet__title">{{ title }}</h2>
             </div>
             <button type="button" class="sheet__close" :aria-label="app.sheet.close" @click="close">
@@ -87,7 +85,6 @@ onBeforeUnmount(() => props.open && unlock())
     position: absolute;
     inset: 0;
     background: var(--color-overlay);
-    backdrop-filter: blur(6px);
   }
 
   &__panel {
@@ -102,14 +99,6 @@ onBeforeUnmount(() => props.open && unlock())
     box-shadow: 0 -24px 60px -20px var(--color-shadow);
     overflow: hidden;
 
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0 0 auto;
-      height: 120px;
-      background: linear-gradient(180deg, var(--color-sage-soft), transparent);
-      pointer-events: none;
-    }
   }
 
   &__handle {

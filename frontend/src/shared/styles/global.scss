@@ -57,26 +57,21 @@ body {
   font-size: var(--fs-md);
   line-height: 1.45;
   color: var(--color-ink);
-  background:
-    radial-gradient(120% 60% at 0% -10%, var(--color-bg-glow-a) 0%, transparent 60%),
-    radial-gradient(90% 50% at 110% 30%, var(--color-bg-glow-b) 0%, transparent 55%),
-    var(--color-bg);
-  background-attachment: fixed;
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
   transition: background-color var(--duration-slow) var(--ease-out), color var(--duration-slow) var(--ease-out);
+}
 
-  &::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-grain);
-    background-image: var(--texture-grain);
-    opacity: 0.16;
-    mix-blend-mode: overlay;
-    pointer-events: none;
-  }
+::selection {
+  background: var(--color-rose-soft);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-sage-deep);
+  outline-offset: 2px;
 }
 
 h1,

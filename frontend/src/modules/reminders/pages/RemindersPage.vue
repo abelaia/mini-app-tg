@@ -42,7 +42,7 @@ const retry = () => Promise.all([reminders.load(), schedule.load()])
 
 <template>
   <section class="reminders">
-    <SectionHeading :eyebrow="content.eyebrow" :title="content.title" :text="subtitle" />
+    <SectionHeading :title="content.title" :text="subtitle" />
     <AsyncState :status="status" @retry="retry">
       <TransitionGroup v-if="items.length" tag="ul" name="reminders" class="reminders__list">
         <ReminderItem v-for="item in items" :key="item.id" :show="item.show" :kind="item.kind" @remove="disable(item.showId, item.kind)" />
