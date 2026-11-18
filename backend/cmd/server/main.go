@@ -12,6 +12,7 @@ import (
 	"time"
 	_ "time/tzdata"
 
+	"github.com/abelaia/mini-app-tg/backend/internal/admin"
 	"github.com/abelaia/mini-app-tg/backend/internal/bot"
 	"github.com/abelaia/mini-app-tg/backend/internal/config"
 	"github.com/abelaia/mini-app-tg/backend/internal/httpx"
@@ -37,15 +38,22 @@ func run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	sched, err := schedule.Load(cfg.SchedulePath)
-	if err != nil {
-		return err
-	}
 	db, err := storage.Open(ctx, cfg.DatabaseURL)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
+
+	store, err := schedule.OpenStore(ctx, db, cfg.SchedulePath)
+	if err != nil {
+		return err
+	}
+	acl := admin.NewACL(cfg.AdminIDs)
+	if acl.Empty() {
+		slog.Warn("ADMIN_IDS is empty: admin panel is locked for everyone")
+	} else {
+		slog.Info("admin acl loaded", "count", len(cfg.AdminIDs))
+	}
 
 	users := user.NewRepository(db)
 	reminders := reminder.NewRepository(db)
@@ -59,15 +67,16 @@ func run() error {
 		httpx.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
 	router.Mount(
-		schedule.NewHandler(sched, cfg.RemindBefore),
-		user.NewHandler(users),
-		reminder.NewHandler(reminders, users, sched),
+		schedule.NewHandler(store, cfg.RemindBefore),
+		user.NewHandler(users, acl),
+		reminder.NewHandler(reminders, users, store),
+		admin.NewHandler(store, acl),
 	)
 	router.Static(cfg.StaticDir)
 
 	if cfg.BotToken != "" {
 		tg := telegram.NewBot(cfg.BotToken)
-		notifier := reminder.NewNotifier(reminders, users, sched, tg, reminder.NotifierOptions{
+		notifier := reminder.NewNotifier(reminders, users, store, tg, reminder.NotifierOptions{
 			Lead:      cfg.RemindBefore,
 			Grace:     15 * time.Minute,
 			Interval:  30 * time.Second,

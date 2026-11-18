@@ -8,6 +8,7 @@ export const useScheduleStore = defineStore('schedule', () => {
   const platforms = ref({})
   const timezone = ref(DEFAULT_TIMEZONE)
   const remindBeforeMinutes = ref(10)
+  const promo = ref(null)
   const status = ref('idle')
 
   const byDay = computed(() => Object.fromEntries(WEEK.map((day) => [day, shows.value.filter((show) => show.day === day)])))
@@ -21,6 +22,7 @@ export const useScheduleStore = defineStore('schedule', () => {
     platforms.value = data.platforms
     timezone.value = data.timezone
     remindBeforeMinutes.value = data.remindBeforeMinutes
+    promo.value = data.promo ?? null
     status.value = 'ready'
   }
 
@@ -39,5 +41,5 @@ export const useScheduleStore = defineStore('schedule', () => {
     }
   }
 
-  return { shows, platforms, timezone, remindBeforeMinutes, status, byDay, showById, platformOf, load }
+  return { shows, platforms, timezone, remindBeforeMinutes, promo, status, byDay, showById, platformOf, load }
 })

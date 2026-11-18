@@ -15,14 +15,18 @@ type UserSaver interface {
 	Upsert(ctx context.Context, u telegram.User) error
 }
 
+type EventBook interface {
+	HasEvent(showID string, kind schedule.Kind) bool
+}
+
 type Handler struct {
 	repo     *Repository
 	users    UserSaver
-	schedule *schedule.Schedule
+	schedule EventBook
 }
 
-func NewHandler(repo *Repository, users UserSaver, s *schedule.Schedule) *Handler {
-	return &Handler{repo: repo, users: users, schedule: s}
+func NewHandler(repo *Repository, users UserSaver, book EventBook) *Handler {
+	return &Handler{repo: repo, users: users, schedule: book}
 }
 
 func (h *Handler) Register(r *httpx.Router) {

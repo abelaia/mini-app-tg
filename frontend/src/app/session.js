@@ -1,3 +1,3 @@
-import { http } from '@/shared/api/http'
+import { useSessionStore } from './sessionStore'
 
-export const startSession = () => http.post('/api/session').catch(() => null)
+export const startSession = () => useSessionStore().start()

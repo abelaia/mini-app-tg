@@ -4,15 +4,17 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/abelaia/mini-app-tg/backend/internal/admin"
 	"github.com/abelaia/mini-app-tg/backend/internal/httpx"
 )
 
 type Handler struct {
 	repo *Repository
+	acl  admin.ACL
 }
 
-func NewHandler(repo *Repository) *Handler {
-	return &Handler{repo: repo}
+func NewHandler(repo *Repository, acl admin.ACL) *Handler {
+	return &Handler{repo: repo, acl: acl}
 }
 
 func (h *Handler) Register(r *httpx.Router) {
@@ -26,5 +28,8 @@ func (h *Handler) session(w http.ResponseWriter, r *http.Request) {
 		httpx.Error(w, http.StatusInternalServerError, "internal error")
 		return
 	}
-	httpx.JSON(w, http.StatusOK, u)
+	httpx.JSON(w, http.StatusOK, map[string]any{
+		"user":    u,
+		"isAdmin": h.acl.IsAdmin(u.ID),
+	})
 }

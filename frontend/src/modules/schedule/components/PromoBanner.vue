@@ -1,14 +1,20 @@
 <script setup>
+import { computed } from 'vue'
 import { promoBanner } from '@/shared/lib/media'
 import content from '../content.json'
+import { useScheduleStore } from '../store'
+
+const schedule = useScheduleStore()
+
+const promo = computed(() => schedule.promo ?? content.promo)
 </script>
 
 <template>
-  <aside class="promo">
+  <aside v-if="promo?.text" class="promo">
     <img class="promo__image" :src="promoBanner" alt="" decoding="async" />
     <div class="promo__copy">
-      <span class="promo__eyebrow">{{ content.promo.eyebrow }}</span>
-      <p class="promo__text">{{ content.promo.text }}</p>
+      <span class="promo__eyebrow">{{ promo.eyebrow || content.promo.eyebrow }}</span>
+      <p class="promo__text">{{ promo.text }}</p>
     </div>
   </aside>
 </template>

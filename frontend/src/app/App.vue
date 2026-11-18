@@ -1,16 +1,20 @@
 <script setup>
-import { onMounted } from 'vue'
-import { initModules, navigation } from '@/modules'
+import { computed, onMounted } from 'vue'
+import { initModules, navigationFor } from '@/modules'
 import { setupTelegram } from '@/shared/telegram/telegram'
 import { useBackButton } from '@/shared/telegram/useBackButton'
 import { useTelegramTheme } from '@/shared/telegram/useTelegramTheme'
 import AppHeader from '@/shared/ui/AppHeader.vue'
 import TabBar from '@/shared/ui/TabBar.vue'
 import ToastHost from '@/shared/ui/ToastHost.vue'
+import { useSessionStore } from './sessionStore'
 import { startSession } from './session'
 
 useTelegramTheme()
 useBackButton()
+
+const session = useSessionStore()
+const navigation = computed(() => navigationFor(session.isAdmin))
 
 onMounted(() => {
   setupTelegram()

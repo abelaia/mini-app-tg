@@ -22,6 +22,7 @@ type Config struct {
 	RemindBefore   time.Duration
 	BotMode        string
 	DevUserID      int64
+	AdminIDs       []int64
 }
 
 func (c Config) IsDev() bool {
@@ -50,6 +51,7 @@ func Load() (Config, error) {
 		RemindBefore:   duration("REMIND_BEFORE", 10*time.Minute),
 		BotMode:        get("BOT_MODE", "auto"),
 		DevUserID:      int64Value("DEV_USER_ID", 0),
+		AdminIDs:       int64List("ADMIN_IDS"),
 	}
 	if cfg.DatabaseURL == "" {
 		return cfg, errors.New("DATABASE_URL is required")
@@ -57,7 +59,22 @@ func Load() (Config, error) {
 	if cfg.BotToken == "" && !cfg.IsDev() {
 		return cfg, errors.New("BOT_TOKEN is required")
 	}
+	if len(cfg.AdminIDs) == 0 && cfg.IsDev() && cfg.DevUserID != 0 {
+		cfg.AdminIDs = []int64{cfg.DevUserID}
+	}
 	return cfg, nil
+}
+
+func int64List(key string) []int64 {
+	var out []int64
+	for _, part := range split(get(key, "")) {
+		n, err := strconv.ParseInt(part, 10, 64)
+		if err != nil || n == 0 {
+			continue
+		}
+		out = append(out, n)
+	}
+	return out
 }
 
 func get(key, fallback string) string {

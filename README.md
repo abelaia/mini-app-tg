@@ -98,6 +98,7 @@ Mini App открывается только по HTTPS, поэтому лока
 | `REMIND_BEFORE` | `10m` | за сколько до эфира присылать напоминание |
 | `BOT_MODE` | `auto` | `auto` - вебхук, если задан `WEBAPP_URL`, иначе long polling; можно явно `webhook` или `polling` |
 | `DEV_USER_ID` | `0` | тестовый пользователь для `APP_ENV=dev` |
+| `ADMIN_IDS` | — | Telegram user id админов через запятую; у них в мини-приложении вкладка «Админ». В `dev` при пустом списке берётся `DEV_USER_ID` |
 
 ## Тесты
 
@@ -125,4 +126,8 @@ docker build -t turkdizi .
 docker run -d -p 8080:8080 -e DATABASE_URL=... -e BOT_TOKEN=... -e WEBAPP_URL=https://... turkdizi
 ```
 
-Образ собирает фронтенд и бэкенд вместе и сразу раздаёт приложение на `:8080`. Для [Render](https://render.com) есть готовый `render.yaml`: `DATABASE_URL`, `BOT_TOKEN` и `WEBAPP_URL` задаются в панели Render.
+Образ собирает фронтенд и бэкенд вместе и сразу раздаёт приложение на `:8080`. Для [Render](https://render.com) есть готовый `render.yaml`: `DATABASE_URL`, `BOT_TOKEN`, `WEBAPP_URL` и `ADMIN_IDS` задаются в панели Render.
+
+### Админка
+
+Расписание и баннер-анонс хранятся в PostgreSQL (не в файле на диске Render). Открой мини-приложение под Telegram-аккаунтом из `ADMIN_IDS` — появится вкладка «Админ». Там можно править день, время, переводчика, площадку, выключать сериал и менять текст анонса. Обычные зрители эту вкладку не видят: доступ проверяется по подписи Telegram `initData`.
