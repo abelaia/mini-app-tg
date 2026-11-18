@@ -14,7 +14,8 @@ useTelegramTheme()
 useBackButton()
 
 const session = useSessionStore()
-const navigation = computed(() => navigationFor(session.isAdmin))
+// В локальном Vite админ-вкладка всегда в таббаре; в проде — только при isAdmin.
+const navigation = computed(() => navigationFor(session.isAdmin || import.meta.env.DEV))
 
 onMounted(() => {
   setupTelegram()
