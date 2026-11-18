@@ -36,5 +36,10 @@
     "title": "Нет доступа",
     "text": "Эта вкладка только для админов сообщества"
   },
+  "offline": {
+    "title": "Бэкенд не запущен",
+    "text": "В другом терминале: cd backend && cp .env.example .env && go run ./cmd/server. В .env нужны APP_ENV=dev, DEV_USER_ID=1, ADMIN_IDS=1 и рабочий DATABASE_URL.",
+    "action": "Повторить"
+  },
   "error": "Не удалось сохранить. Проверьте поля и попробуйте ещё раз."
 }

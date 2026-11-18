@@ -48,6 +48,11 @@ onMounted(async () => {
 function goHome() {
   router.push('/')
 }
+
+async function retryAdmin() {
+  await session.start()
+  if (session.isAdmin) await admin.load()
+}
 </script>
 
 <template>
@@ -56,6 +61,15 @@ function goHome() {
 
     <EmptyState v-if="session.ready && !session.isAdmin" icon="shield" :title="content.denied.title" :text="content.denied.text">
       <BaseButton variant="ghost" @click="goHome">На «Сегодня»</BaseButton>
+    </EmptyState>
+
+    <EmptyState
+      v-else-if="session.isAdmin && admin.status === 'error'"
+      icon="shield"
+      :title="content.offline.title"
+      :text="content.offline.text"
+    >
+      <BaseButton icon="repeat" @click="retryAdmin">{{ content.offline.action }}</BaseButton>
     </EmptyState>
 
     <template v-else-if="session.isAdmin">
