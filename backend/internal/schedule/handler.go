@@ -31,15 +31,13 @@ type response struct {
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "public, max-age=30")
 	promo := h.store.Promo()
-	var promoOut *Promo
-	if promo.Enabled {
-		promoOut = &promo
-	}
+	// Always return promo (including enabled:false) so the client can hide a
+	// disabled banner instead of falling back to hardcoded copy.
 	httpx.JSON(w, http.StatusOK, response{
 		Timezone:            h.store.Timezone(),
 		RemindBeforeMinutes: int(h.remindBefore.Minutes()),
 		Platforms:           h.store.Platforms(),
 		Shows:               h.store.PublicShows(),
-		Promo:               promoOut,
+		Promo:               &promo,
 	})
 }
