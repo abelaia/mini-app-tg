@@ -43,6 +43,11 @@ type Show struct {
 	Platform   string          `json:"platform"`
 	Icon       string          `json:"icon"`
 	Times      map[Kind]string `json:"times"`
+	Enabled    *bool           `json:"enabled,omitempty"`
+}
+
+func (s Show) IsEnabled() bool {
+	return s.Enabled == nil || *s.Enabled
 }
 
 type Schedule struct {
@@ -100,6 +105,16 @@ func (s *Schedule) init() error {
 
 func (s *Schedule) Location() *time.Location {
 	return s.loc
+}
+
+func (s *Schedule) PublicShows() []Show {
+	out := make([]Show, 0, len(s.Shows))
+	for _, show := range s.Shows {
+		if show.IsEnabled() {
+			out = append(out, show)
+		}
+	}
+	return out
 }
 
 func (s *Schedule) Show(id string) (Show, bool) {

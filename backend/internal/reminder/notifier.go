@@ -20,6 +20,12 @@ type Blocker interface {
 	MarkBlocked(ctx context.Context, id int64) error
 }
 
+type Catalog interface {
+	PublicShows() []schedule.Show
+	Platform(id string) schedule.Platform
+	OccurrencesAround(show schedule.Show, kind schedule.Kind, now time.Time) []time.Time
+}
+
 type NotifierOptions struct {
 	Lead      time.Duration
 	Grace     time.Duration
@@ -30,13 +36,13 @@ type NotifierOptions struct {
 type Notifier struct {
 	repo     *Repository
 	users    Blocker
-	schedule *schedule.Schedule
+	schedule Catalog
 	sender   Sender
 	opts     NotifierOptions
 }
 
-func NewNotifier(repo *Repository, users Blocker, s *schedule.Schedule, sender Sender, opts NotifierOptions) *Notifier {
-	return &Notifier{repo: repo, users: users, schedule: s, sender: sender, opts: opts}
+func NewNotifier(repo *Repository, users Blocker, catalog Catalog, sender Sender, opts NotifierOptions) *Notifier {
+	return &Notifier{repo: repo, users: users, schedule: catalog, sender: sender, opts: opts}
 }
 
 func (n *Notifier) Run(ctx context.Context) {
@@ -54,7 +60,7 @@ func (n *Notifier) Run(ctx context.Context) {
 }
 
 func (n *Notifier) Tick(ctx context.Context, now time.Time) {
-	for _, show := range n.schedule.Shows {
+	for _, show := range n.schedule.PublicShows() {
 		for _, kind := range schedule.Kinds {
 			for _, start := range n.schedule.OccurrencesAround(show, kind, now) {
 				fireAt := start.Add(-n.opts.Lead)

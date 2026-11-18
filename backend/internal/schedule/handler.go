@@ -8,12 +8,12 @@ import (
 )
 
 type Handler struct {
-	schedule     *Schedule
+	store        *Store
 	remindBefore time.Duration
 }
 
-func NewHandler(s *Schedule, remindBefore time.Duration) *Handler {
-	return &Handler{schedule: s, remindBefore: remindBefore}
+func NewHandler(store *Store, remindBefore time.Duration) *Handler {
+	return &Handler{store: store, remindBefore: remindBefore}
 }
 
 func (h *Handler) Register(r *httpx.Router) {
@@ -25,14 +25,21 @@ type response struct {
 	RemindBeforeMinutes int                 `json:"remindBeforeMinutes"`
 	Platforms           map[string]Platform `json:"platforms"`
 	Shows               []Show              `json:"shows"`
+	Promo               *Promo              `json:"promo,omitempty"`
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Cache-Control", "public, max-age=60")
+	w.Header().Set("Cache-Control", "public, max-age=30")
+	promo := h.store.Promo()
+	var promoOut *Promo
+	if promo.Enabled {
+		promoOut = &promo
+	}
 	httpx.JSON(w, http.StatusOK, response{
-		Timezone:            h.schedule.Timezone,
+		Timezone:            h.store.Timezone(),
 		RemindBeforeMinutes: int(h.remindBefore.Minutes()),
-		Platforms:           h.schedule.Platforms,
-		Shows:               h.schedule.Shows,
+		Platforms:           h.store.Platforms(),
+		Shows:               h.store.PublicShows(),
+		Promo:               promoOut,
 	})
 }

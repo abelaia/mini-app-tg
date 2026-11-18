@@ -84,5 +84,10 @@
       }
     }
   ],
-  "remindBeforeMinutes": 10
+  "remindBeforeMinutes": 10,
+  "promo": {
+    "eyebrow": "Анонс",
+    "text": "В субботу в 21:00 — «Розы и грехи». Сабина выходит в прямой эфир.",
+    "enabled": true
+  }
 }
