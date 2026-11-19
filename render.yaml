@@ -1,18 +1,18 @@
 services:
-  - type: web
-    name: turkdizi
-    runtime: docker
-    plan: free
-    region: frankfurt
-    healthCheckPath: /api/health
-    envVars:
-      - key: APP_ENV
-        value: prod
-      - key: DATABASE_URL
-        sync: false
-      - key: BOT_TOKEN
-        sync: false
-      - key: WEBAPP_URL
-        sync: false
-      - key: ADMIN_IDS
-        sync: false
+    - type: web
+      name: turkdizi
+      runtime: docker
+      plan: free
+      region: frankfurt
+      healthCheckPath: /api/health
+      envVars:
+          - key: APP_ENV
+            value: prod
+          - key: DATABASE_URL
+            sync: false
+          - key: BOT_TOKEN
+            sync: false
+          - key: WEBAPP_URL
+            sync: false
+          - key: ADMIN_IDS
+            sync: false

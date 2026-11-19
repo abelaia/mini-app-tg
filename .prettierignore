@@ -1,0 +1,14 @@
+**/node_modules/**
+**/dist/**
+**/.git/**
+**/.pgdata/**
+.impeccable/
+docs/
+PRODUCT.md
+DESIGN.md
+**/package-lock.json
+**/go.sum
+**/*.log
+**/.env*
+frontend/public/assets/**
+!frontend/public/assets/schedule.json
