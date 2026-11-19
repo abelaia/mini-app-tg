@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { http } from '@/shared/api/http'
+import { validatePromo, validateSchedule } from './validation'
 
 const blankShow = () => ({
   id: '',
@@ -19,6 +20,7 @@ export const useAdminStore = defineStore('admin', () => {
   const status = ref('idle')
   const saving = ref(false)
   const message = ref('')
+  const fieldErrors = ref({})
 
   async function load() {
     status.value = 'loading'
@@ -51,7 +53,9 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   async function saveSchedule() {
-    if (!schedule.value) return
+    if (!schedule.value || saving.value) return
+    fieldErrors.value = validateSchedule(schedule.value)
+    if (Object.keys(fieldErrors.value).length) return false
     saving.value = true
     message.value = ''
     try {
@@ -59,6 +63,7 @@ export const useAdminStore = defineStore('admin', () => {
         timezone: schedule.value.timezone,
         platforms: schedule.value.platforms,
         shows: schedule.value.shows.map((show) => ({
+          artwork: show.artwork ?? null,
           id: show.id.trim(),
           title: show.title.trim(),
           translator: show.translator.trim(),
@@ -82,7 +87,8 @@ export const useAdminStore = defineStore('admin', () => {
         })),
       }
       message.value = 'schedule'
-    } catch {
+    } catch (error) {
+      fieldErrors.value = error.fields ?? {}
       message.value = 'error'
     } finally {
       saving.value = false
@@ -90,7 +96,9 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   async function savePromo() {
-    if (!promo.value) return
+    if (!promo.value || saving.value) return
+    fieldErrors.value = validatePromo(promo.value)
+    if (Object.keys(fieldErrors.value).length) return false
     saving.value = true
     message.value = ''
     try {
@@ -100,12 +108,13 @@ export const useAdminStore = defineStore('admin', () => {
         enabled: Boolean(promo.value.enabled),
       })
       message.value = 'promo'
-    } catch {
+    } catch (error) {
+      fieldErrors.value = error.fields ?? {}
       message.value = 'error'
     } finally {
       saving.value = false
     }
   }
 
-  return { schedule, promo, status, saving, message, load, addShow, removeShow, saveSchedule, savePromo }
+  return { schedule, promo, status, saving, message, fieldErrors, load, addShow, removeShow, saveSchedule, savePromo }
 })

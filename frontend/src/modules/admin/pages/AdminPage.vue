@@ -11,8 +11,11 @@ import scheduleContent from '@/modules/schedule/content.json'
 import { useToast } from '@/shared/composables/useToast'
 import content from '../content.json'
 import { useAdminStore } from '../store'
+import BaseField from '@/shared/ui/BaseField.vue'
+import { useFormValidation } from '@/shared/composables/useFormValidation'
+import { ICON_OPTIONS, validatePromo, validateSchedule } from '../validation'
+import ArtworkEditor from '../components/ArtworkEditor.vue'
 
-const ICON_OPTIONS = ['city', 'mosque', 'layers', 'flame', 'wave', 'rose', 'sparkle', 'sun']
 
 const session = useSessionStore()
 const admin = useAdminStore()
@@ -20,6 +23,28 @@ const schedule = useScheduleStore()
 const toast = useToast()
 const router = useRouter()
 const tab = ref('shows')
+const showsForm = ref(null)
+const promoForm = ref(null)
+const imageUploads = ref(0)
+const showsValidation = useFormValidation(() => ({ ...admin.fieldErrors, ...validateSchedule(admin.schedule) }))
+const promoValidation = useFormValidation(() => ({ ...admin.fieldErrors, ...validatePromo(admin.promo) }))
+watch(() => [admin.schedule, admin.promo], () => { admin.fieldErrors = {} }, { deep: true })
+watch(tab, () => { admin.fieldErrors = {}; showsValidation.reset(); promoValidation.reset() })
+
+async function saveSchedule() {
+  if (imageUploads.value) return
+  if (await showsValidation.check(showsForm.value)) {
+    await admin.saveSchedule()
+    if (Object.keys(admin.fieldErrors).length) await showsValidation.check(showsForm.value)
+  }
+}
+async function savePromo() {
+  if (await promoValidation.check(promoForm.value)) {
+    await admin.savePromo()
+    if (Object.keys(admin.fieldErrors).length) await promoValidation.check(promoForm.value)
+  }
+}
+function removeShow(index) { admin.removeShow(index); showsValidation.reset() }
 
 const days = computed(() => Object.entries(scheduleContent.days).map(([id, day]) => ({ id, label: day.full })))
 const platforms = computed(() => Object.entries(admin.schedule?.platforms ?? {}).map(([id, platform]) => ({ id, title: platform.title })))
@@ -74,18 +99,18 @@ async function retryAdmin() {
 
     <template v-else-if="session.isAdmin">
       <div class="admin__tabs">
-        <button type="button" :class="['admin__tab', { 'admin__tab--on': tab === 'shows' }]" @click="tab = 'shows'">{{ content.tabs.shows }}</button>
-        <button type="button" :class="['admin__tab', { 'admin__tab--on': tab === 'promo' }]" @click="tab = 'promo'">{{ content.tabs.promo }}</button>
+        <button type="button" :disabled="admin.saving || imageUploads > 0" :class="['admin__tab', { 'admin__tab--on': tab === 'shows' }]" @click="tab = 'shows'">{{ content.tabs.shows }}</button>
+        <button type="button" :disabled="admin.saving || imageUploads > 0" :class="['admin__tab', { 'admin__tab--on': tab === 'promo' }]" @click="tab = 'promo'">{{ content.tabs.promo }}</button>
       </div>
 
       <AsyncState :status="admin.status" @retry="admin.load">
-        <div v-if="tab === 'shows' && admin.schedule" class="admin__panel">
-          <article v-for="(show, index) in admin.schedule.shows" :key="`${show.id}-${index}`" class="editor">
+        <form v-if="tab === 'shows' && admin.schedule" ref="showsForm" class="admin__panel" novalidate @submit.prevent="saveSchedule">
+          <p v-if="showsValidation.error('shows')" class="field__help field__help--error" role="alert">{{ showsValidation.error('shows') }}</p>
+          <fieldset v-for="(show, index) in admin.schedule.shows" :key="index" class="editor" :disabled="admin.saving" :aria-label="show.title || 'Новый сериал'">
             <header class="editor__head">
-              <label class="field">
-                <span class="field__label">ID</span>
-                <input v-model="show.id" class="field__input" :placeholder="content.shows.idHint" />
-              </label>
+              <BaseField v-slot="{ attrs }" label="ID" :error="showsValidation.error(`shows.${index}.id`)" @blur="showsValidation.touch(`shows.${index}.id`)">
+                <input v-bind="attrs" v-model="show.id" class="field__input" :placeholder="content.shows.idHint" required />
+              </BaseField>
               <label class="switch">
                 <input v-model="show.enabled" type="checkbox" />
                 <span>{{ content.shows.fields.enabled }}</span>
@@ -93,68 +118,61 @@ async function retryAdmin() {
             </header>
 
             <div class="editor__grid">
-              <label class="field">
-                <span class="field__label">{{ content.shows.fields.title }}</span>
-                <input v-model="show.title" class="field__input" />
-              </label>
-              <label class="field">
-                <span class="field__label">{{ content.shows.fields.translator }}</span>
-                <input v-model="show.translator" class="field__input" />
-              </label>
-              <label class="field">
-                <span class="field__label">{{ content.shows.fields.day }}</span>
-                <select v-model="show.day" class="field__input">
+              <BaseField v-slot="{ attrs }" :label="content.shows.fields.title" :error="showsValidation.error(`shows.${index}.title`)" @blur="showsValidation.touch(`shows.${index}.title`)">
+                <input v-bind="attrs" v-model="show.title" class="field__input" required />
+              </BaseField>
+              <BaseField v-slot="{ attrs }" :label="content.shows.fields.translator" :error="showsValidation.error(`shows.${index}.translator`)" @blur="showsValidation.touch(`shows.${index}.translator`)">
+                <input v-bind="attrs" v-model="show.translator" class="field__input" required />
+              </BaseField>
+              <BaseField v-slot="{ attrs }" :label="content.shows.fields.day" :error="showsValidation.error(`shows.${index}.day`)" @blur="showsValidation.touch(`shows.${index}.day`)">
+                <select v-bind="attrs" v-model="show.day" class="field__input" required>
                   <option v-for="day in days" :key="day.id" :value="day.id">{{ day.label }}</option>
                 </select>
-              </label>
-              <label class="field">
-                <span class="field__label">{{ content.shows.fields.platform }}</span>
-                <select v-model="show.platform" class="field__input">
+              </BaseField>
+              <BaseField v-slot="{ attrs }" :label="content.shows.fields.platform" :error="showsValidation.error(`shows.${index}.platform`)" @blur="showsValidation.touch(`shows.${index}.platform`)">
+                <select v-bind="attrs" v-model="show.platform" class="field__input" required>
                   <option v-for="platform in platforms" :key="platform.id" :value="platform.id">{{ platform.title }}</option>
                 </select>
-              </label>
-              <label class="field">
-                <span class="field__label">{{ content.shows.fields.icon }}</span>
-                <select v-model="show.icon" class="field__input">
+              </BaseField>
+              <BaseField v-slot="{ attrs }" :label="content.shows.fields.icon" :error="showsValidation.error(`shows.${index}.icon`)" @blur="showsValidation.touch(`shows.${index}.icon`)">
+                <select v-bind="attrs" v-model="show.icon" class="field__input" required>
                   <option v-for="icon in ICON_OPTIONS" :key="icon" :value="icon">{{ icon }}</option>
                 </select>
-              </label>
-              <label class="field">
-                <span class="field__label">{{ content.shows.fields.repeat }}</span>
-                <input v-model="show.times.repeat" class="field__input" type="time" />
-              </label>
-              <label class="field">
-                <span class="field__label">{{ content.shows.fields.premiere }}</span>
-                <input v-model="show.times.premiere" class="field__input" type="time" />
-              </label>
+              </BaseField>
+              <BaseField v-slot="{ attrs }" :label="content.shows.fields.repeat" :error="showsValidation.error(`shows.${index}.times.repeat`)" @blur="showsValidation.touch(`shows.${index}.times.repeat`)">
+                <input v-bind="attrs" v-model="show.times.repeat" class="field__input" type="time" required />
+              </BaseField>
+              <BaseField v-slot="{ attrs }" :label="content.shows.fields.premiere" :error="showsValidation.error(`shows.${index}.times.premiere`)" @blur="showsValidation.touch(`shows.${index}.times.premiere`)">
+                <input v-bind="attrs" v-model="show.times.premiere" class="field__input" type="time" required />
+              </BaseField>
             </div>
 
-            <BaseButton variant="ghost" size="sm" icon="close" @click="admin.removeShow(index)">{{ content.shows.remove }}</BaseButton>
-          </article>
+            <ArtworkEditor v-model="show.artwork" @uploading="imageUploads += $event ? 1 : -1" />
+            <p v-if="showsValidation.error(`shows.${index}.artwork`)" class="field__help field__help--error">{{ showsValidation.error(`shows.${index}.artwork`) }}</p>
+            <BaseButton variant="ghost" size="sm" icon="close" :disabled="imageUploads > 0" @click="removeShow(index)">{{ content.shows.remove }}</BaseButton>
+          </fieldset>
 
           <div class="admin__actions">
-            <BaseButton variant="ghost" icon="sparkle" @click="admin.addShow">{{ content.shows.add }}</BaseButton>
-            <BaseButton icon="check" :disabled="admin.saving" @click="admin.saveSchedule">{{ content.shows.save }}</BaseButton>
+            <BaseButton variant="ghost" icon="sparkle" :disabled="admin.saving || imageUploads > 0" @click="admin.addShow">{{ content.shows.add }}</BaseButton>
+            <BaseButton type="submit" icon="check" :disabled="admin.saving || imageUploads > 0">{{ content.shows.save }}</BaseButton>
           </div>
-        </div>
+        </form>
 
-        <div v-else-if="tab === 'promo' && admin.promo" class="admin__panel promo-edit">
-          <label class="field">
-            <span class="field__label">{{ content.promo.eyebrow }}</span>
-            <input v-model="admin.promo.eyebrow" class="field__input" />
-          </label>
-          <label class="field">
-            <span class="field__label">{{ content.promo.text }}</span>
-            <textarea v-model="admin.promo.text" class="field__input field__input--area" rows="4" />
-          </label>
+        <form v-else-if="tab === 'promo' && admin.promo" ref="promoForm" class="admin__panel promo-edit" novalidate @submit.prevent="savePromo">
+          <BaseField v-slot="{ attrs }" :label="content.promo.eyebrow" :error="promoValidation.error('eyebrow')" @blur="promoValidation.touch('eyebrow')">
+            <input v-bind="attrs" v-model="admin.promo.eyebrow" class="field__input" :disabled="admin.saving" required />
+          </BaseField>
+          <BaseField v-slot="{ attrs }" :label="content.promo.text" :error="promoValidation.error('text')" @blur="promoValidation.touch('text')">
+            <textarea v-bind="attrs" v-model="admin.promo.text" class="field__input field__input--area" rows="4" :disabled="admin.saving" required />
+          </BaseField>
           <label class="switch">
-            <input v-model="admin.promo.enabled" type="checkbox" />
+            <input v-model="admin.promo.enabled" type="checkbox" :disabled="admin.saving" />
             <span>{{ content.promo.enabled }}</span>
           </label>
           <div class="admin__actions">
-            <BaseButton icon="check" :disabled="admin.saving" @click="admin.savePromo">{{ content.promo.save }}</BaseButton>
+            <BaseButton type="submit" icon="check" :disabled="admin.saving">{{ content.promo.save }}</BaseButton>
           </div>
-        </div>
+        </form>
       </AsyncState>
     </template>
   </section>
@@ -206,6 +224,8 @@ async function retryAdmin() {
 }
 
 .editor {
+  min-width: 0;
+  margin: 0;
   @include card;
   display: flex;
   flex-direction: column;
@@ -222,35 +242,6 @@ async function retryAdmin() {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-3);
-  }
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-
-  &__label {
-    @include eyebrow;
-    color: var(--color-ink-muted);
-  }
-
-  &__input {
-    width: 100%;
-    min-height: 44px;
-    padding: 0 var(--space-3);
-    border: var(--border-hairline) solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-muted);
-    color: var(--color-ink);
-    font: inherit;
-
-    &--area {
-      min-height: 110px;
-      padding: var(--space-3);
-      resize: vertical;
-    }
   }
 }
 

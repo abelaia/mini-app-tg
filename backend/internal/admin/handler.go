@@ -22,6 +22,7 @@ func NewHandler(store *schedule.Store, acl ACL) *Handler {
 }
 
 func (h *Handler) Register(r *httpx.Router) {
+	r.Private("POST /api/admin/media", h.uploadMedia)
 	r.Private("GET /api/admin/schedule", h.getSchedule)
 	r.Private("PUT /api/admin/schedule", h.putSchedule)
 	r.Private("GET /api/admin/promo", h.getPromo)
@@ -54,8 +55,13 @@ func (h *Handler) putSchedule(w http.ResponseWriter, r *http.Request) {
 		httpx.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	for i := range next.Shows {
+		next.Shows[i].ID = strings.TrimSpace(next.Shows[i].ID)
+		next.Shows[i].Title = strings.TrimSpace(next.Shows[i].Title)
+		next.Shows[i].Translator = strings.TrimSpace(next.Shows[i].Translator)
+	}
 	if err := validateSchedule(next); err != nil {
-		httpx.Error(w, http.StatusUnprocessableEntity, err.Error())
+		httpx.JSON(w, http.StatusUnprocessableEntity, map[string]any{"error": err.Error(), "fields": err})
 		return
 	}
 	if err := h.store.Replace(r.Context(), next); err != nil {
@@ -84,8 +90,8 @@ func (h *Handler) putPromo(w http.ResponseWriter, r *http.Request) {
 	}
 	promo.Eyebrow = strings.TrimSpace(promo.Eyebrow)
 	promo.Text = strings.TrimSpace(promo.Text)
-	if promo.Eyebrow == "" || promo.Text == "" {
-		httpx.Error(w, http.StatusUnprocessableEntity, "eyebrow and text are required")
+	if err := validatePromo(promo); err != nil {
+		httpx.JSON(w, http.StatusUnprocessableEntity, map[string]any{"error": err.Error(), "fields": err})
 		return
 	}
 	if err := h.store.SetPromo(r.Context(), promo); err != nil {
@@ -95,40 +101,3 @@ func (h *Handler) putPromo(w http.ResponseWriter, r *http.Request) {
 	}
 	httpx.JSON(w, http.StatusOK, h.store.Promo())
 }
-
-func validateSchedule(s schedule.Schedule) error {
-	if strings.TrimSpace(s.Timezone) == "" {
-		return errText("timezone is required")
-	}
-	if len(s.Platforms) == 0 {
-		return errText("at least one platform is required")
-	}
-	if len(s.Shows) == 0 {
-		return errText("at least one show is required")
-	}
-	for id := range s.Platforms {
-		if !showIDPattern.MatchString(id) {
-			return errText("bad platform id")
-		}
-	}
-	seen := map[string]struct{}{}
-	for _, show := range s.Shows {
-		if !showIDPattern.MatchString(show.ID) {
-			return errText("bad show id: " + show.ID)
-		}
-		if _, ok := seen[show.ID]; ok {
-			return errText("duplicate show id")
-		}
-		seen[show.ID] = struct{}{}
-		if strings.TrimSpace(show.Title) == "" {
-			return errText("show title is required")
-		}
-	}
-	return nil
-}
-
-type plainError string
-
-func (e plainError) Error() string { return string(e) }
-
-func errText(s string) error { return plainError(s) }

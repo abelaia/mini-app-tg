@@ -1,7 +1,10 @@
 package schedule
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/abelaia/mini-app-tg/backend/internal/httpx"
@@ -18,6 +21,30 @@ func NewHandler(store *Store, remindBefore time.Duration) *Handler {
 
 func (h *Handler) Register(r *httpx.Router) {
 	r.Public("GET /api/schedule", h.get)
+	r.Public("GET /api/media/{id}", h.getMedia)
+}
+
+var mediaIDPattern = regexp.MustCompile(`^[a-f0-9]{64}$`)
+
+func (h *Handler) getMedia(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if !mediaIDPattern.MatchString(id) {
+		http.NotFound(w, r)
+		return
+	}
+	data, contentType, err := h.store.Media(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		httpx.Error(w, http.StatusInternalServerError, "Не удалось загрузить изображение")
+		return
+	}
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	w.Write(data)
 }
 
 type response struct {
