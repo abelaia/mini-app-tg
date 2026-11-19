@@ -62,14 +62,18 @@ func validateSchedule(s schedule.Schedule) error {
 		e.text(key+".title", show.Title, 120)
 		e.text(key+".translator", show.Translator, 80)
 		if show.Artwork != nil {
-			if !regexpMediaURL.MatchString(show.Artwork.URL) {
-				e[key+".artwork"] = "Загрузите изображение через форму"
+			art := show.Artwork
+			zoom, stretch := art.Zoom, art.Stretch
+			if zoom == 0 {
+				zoom = 1
 			}
-			if show.Artwork.Role != "banner" && show.Artwork.Role != "icon" {
-				e[key+".artwork"] = "Выберите баннер или иконку"
+			if stretch == 0 {
+				stretch = 1
 			}
-			if show.Artwork.Fit != "contain" && show.Artwork.Fit != "cover" {
-				e[key+".artwork"] = "Выберите способ размещения картинки"
+			if !regexpMediaURL.MatchString(art.URL) || art.Role != "icon" || art.Fit != "cover" ||
+				zoom < 1 || zoom > 3 || stretch < 0.75 || stretch > 1.6 ||
+				art.X < -80 || art.X > 80 || art.Y < -80 || art.Y > 80 {
+				e[key+".artwork"] = "Загрузите картинку и настройте кадр иконки"
 			}
 		}
 		if !days[show.Day] {

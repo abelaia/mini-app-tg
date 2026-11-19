@@ -4,8 +4,6 @@ export const showPoster = (showId) => asset(`assets/shows/${showId}.webp`)
 
 export const brandAvatar = asset('assets/brand/avatar.webp')
 
-export const promoBanner = asset('assets/banner/promo.webp')
-
 export const rasterIcons = {
   sun: asset('assets/ui/sun.webp'),
   calendar: asset('assets/ui/calendar.webp'),

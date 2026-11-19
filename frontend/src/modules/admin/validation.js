@@ -4,6 +4,21 @@ import { WEEK } from '@/shared/lib/time'
 export const ICON_OPTIONS = ['city', 'mosque', 'layers', 'flame', 'wave', 'rose', 'sparkle', 'sun']
 export const LIMITS = { id: 64, title: 120, translator: 80, eyebrow: 80, promo: 1000 }
 
+function inRange(value, min, max, fallback) {
+  const number = Number(value ?? fallback)
+  return Number.isFinite(number) && number >= min && number <= max
+}
+
+function validArtwork(artwork) {
+  return /^\/api\/media\/[a-f0-9]{64}$/.test(artwork.url ?? '')
+    && artwork.role === 'icon'
+    && artwork.fit === 'cover'
+    && inRange(artwork.zoom, 1, 3, 1)
+    && inRange(artwork.stretch, 0.75, 1.6, 1)
+    && inRange(artwork.x, -80, 80, 0)
+    && inRange(artwork.y, -80, 80, 0)
+}
+
 export function validateSchedule(schedule) {
   const errors = {}
   const add = (key, value, rules) => { const error = validate(value, rules); if (error) errors[key] = error }
@@ -14,7 +29,7 @@ export function validateSchedule(schedule) {
     add(`${path}.id`, show.id, [required, maxLength(LIMITS.id), slug])
     add(`${path}.title`, show.title, [required, maxLength(LIMITS.title)])
     add(`${path}.translator`, show.translator, [required, maxLength(LIMITS.translator)])
-    if (show.artwork && (!/^\/api\/media\/[a-f0-9]{64}$/.test(show.artwork.url ?? '') || !['banner','icon'].includes(show.artwork.role) || !['contain','cover'].includes(show.artwork.fit))) errors[`${path}.artwork`] = 'Загрузите картинку и выберите способ размещения'
+    if (show.artwork && !validArtwork(show.artwork)) errors[`${path}.artwork`] = 'Загрузите картинку и настройте кадр иконки'
     add(`${path}.day`, show.day, [oneOf(WEEK)])
     add(`${path}.platform`, show.platform, [oneOf(Object.keys(schedule.platforms ?? {}))])
     add(`${path}.icon`, show.icon, [oneOf(ICON_OPTIONS)])

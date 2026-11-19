@@ -48,9 +48,13 @@ type Show struct {
 }
 
 type Artwork struct {
-	URL  string `json:"url"`
-	Role string `json:"role"`
-	Fit  string `json:"fit"`
+	URL     string  `json:"url"`
+	Role    string  `json:"role"`
+	Fit     string  `json:"fit"`
+	Zoom    float64 `json:"zoom"`
+	Stretch float64 `json:"stretch"`
+	X       float64 `json:"x"`
+	Y       float64 `json:"y"`
 }
 
 func (s Show) IsEnabled() bool {
