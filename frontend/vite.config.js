@@ -8,8 +8,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@fontsource/source-serif-4': fileURLToPath(new URL('./node_modules/@fontsource/source-serif-4', import.meta.url)),
-      '@fontsource/source-sans-3': fileURLToPath(new URL('./node_modules/@fontsource/source-sans-3', import.meta.url)),
+      '@fontsource/cormorant-garamond': fileURLToPath(new URL('./node_modules/@fontsource/cormorant-garamond', import.meta.url)),
+      '@fontsource/manrope': fileURLToPath(new URL('./node_modules/@fontsource/manrope', import.meta.url)),
       '@fontsource/great-vibes': fileURLToPath(new URL('./node_modules/@fontsource/great-vibes', import.meta.url)),
     },
   },

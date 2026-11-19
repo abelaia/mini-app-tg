@@ -11,3 +11,11 @@ backend/server.exe
 *.db
 *.db-*
 .pgdata/
+
+# Local design notes and visual checks
+/.impeccable/
+/PRODUCT.md
+/DESIGN.md
+/docs/rework-plan.md
+/docs/avatar.png
+/docs/dalekiy-gorod.png

@@ -31,7 +31,7 @@ defineProps({
 
   &--today {
     border-color: var(--color-sage);
-    box-shadow: 0 0 0 var(--border-hairline) var(--color-sage);
+    box-shadow: 0 0 0 var(--border-hairline) var(--color-sage), 0 18px 40px -28px var(--color-shadow);
   }
 
   &--empty {
@@ -57,7 +57,7 @@ defineProps({
     color: var(--color-sage-deep);
     font-size: var(--fs-xxs);
     font-weight: 700;
-    text-transform: none;
+    text-transform: uppercase;
   }
 
   &--today &__short {
@@ -72,7 +72,7 @@ defineProps({
 
   &__name {
     flex: 1;
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: var(--fs-lg);
     font-weight: 600;
   }

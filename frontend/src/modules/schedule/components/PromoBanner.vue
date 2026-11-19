@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue'
-import { promoBanner } from '@/shared/lib/media'
 import content from '../content.json'
 import { useScheduleStore } from '../store'
 
@@ -10,9 +9,9 @@ const promo = computed(() => schedule.promo ?? content.promo)
 </script>
 
 <template>
-  <aside v-if="promo?.text" class="promo">
-    <img class="promo__image" :src="promoBanner" alt="" decoding="async" />
+  <aside v-if="promo?.text && promo.enabled !== false" class="promo">
     <div class="promo__copy">
+      <h2 class="promo__eyebrow">{{ promo.eyebrow || content.promo.eyebrow }}</h2>
       <p class="promo__text">{{ promo.text }}</p>
     </div>
   </aside>
@@ -47,6 +46,11 @@ const promo = computed(() => schedule.promo ?? content.promo)
     background: color-mix(in srgb, var(--color-surface) 92%, var(--color-ink));
   }
 
+  &__eyebrow {
+    @include eyebrow;
+    color: var(--color-rose);
+  }
+
   &__text {
     margin: 0;
     font-size: var(--fs-sm);
@@ -58,5 +62,15 @@ const promo = computed(() => schedule.promo ?? content.promo)
 
 :root[data-theme='dark'] .promo__copy {
   background: color-mix(in srgb, var(--color-surface) 88%, black);
+}
+</style>
+
+<style lang="scss">
+.promo {
+  display: block; min-height: 0; border: 0; border-radius: 0; background: none;
+  border-top: 1px solid var(--color-line); padding-top: 24px; margin-top: 24px;
+  &__copy { padding: 0; background: none !important; gap: 10px; }
+  &__eyebrow { font: 600 26px/1.1 var(--font-serif); letter-spacing: 0; text-transform: none; }
+  &__text { font-size: 13px; font-weight: 400; color: var(--color-ink-soft); line-height: 1.6; }
 }
 </style>

@@ -52,6 +52,9 @@ body {
   min-height: 100%;
 }
 
+:focus-visible { outline: 2px solid var(--color-sage); outline-offset: 4px; }
+::selection { background: var(--color-sage-soft); color: var(--color-ink); }
+
 body {
   font-family: var(--font-sans);
   font-size: var(--fs-md);
@@ -62,16 +65,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
   transition: background-color var(--duration-slow) var(--ease-out), color var(--duration-slow) var(--ease-out);
-}
 
-::selection {
-  background: var(--color-rose-soft);
-  color: var(--color-ink);
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-sage-deep);
-  outline-offset: 2px;
 }
 
 h1,

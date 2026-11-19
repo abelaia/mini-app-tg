@@ -18,11 +18,11 @@ const platform = computed(() => schedule.platformOf(props.show))
   <article class="show-row">
     <ShowArt :show="show" size="medallion" />
     <div class="show-row__body">
+      <span v-if="caption" class="show-row__caption">{{ caption }}</span>
       <h3 class="show-row__title">{{ show.title }}</h3>
-      <p class="show-row__meta">{{ [caption, show.translator, platform.title].filter(Boolean).join(' · ') }}</p>
+      <p class="show-row__meta">{{ show.translator }} · {{ platform.title }}</p>
       <div class="show-row__times">
-        <ReminderBell :show-id="show.id" kind="premiere" variant="chip" :label="`${show.times.premiere} · ${content.kinds.premiere.short}`" />
-        <ReminderBell :show-id="show.id" kind="repeat" variant="quiet" :label="`${content.kinds.repeat.short} ${show.times.repeat}`" />
+        <ReminderBell v-for="kind in content.kindOrder" :key="kind" :show-id="show.id" :kind="kind" variant="chip" :label="show.times[kind]" :hint="content.kinds[kind].hint" />
       </div>
     </div>
   </article>
@@ -40,8 +40,14 @@ const platform = computed(() => schedule.platformOf(props.show))
     min-width: 0;
   }
 
+  &__caption {
+    @include eyebrow;
+    font-size: var(--fs-xxs);
+    color: var(--color-sage);
+  }
+
   &__title {
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: var(--fs-lg);
     font-weight: 600;
     line-height: 1.15;

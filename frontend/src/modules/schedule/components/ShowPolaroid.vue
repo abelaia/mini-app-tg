@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import BaseIcon from '@/shared/ui/BaseIcon.vue'
 import content from '../content.json'
 import { useScheduleStore } from '../store'
 import EventRow from './EventRow.vue'
@@ -12,57 +13,80 @@ const props = defineProps({
 
 const schedule = useScheduleStore()
 const platform = computed(() => schedule.platformOf(props.show))
-const kinds = ['premiere', 'repeat']
 </script>
 
 <template>
   <article class="polaroid">
-    <div class="polaroid__lead">
-      <ShowArt :show="show" size="medallion" />
-      <div class="polaroid__copy">
-        <h3 class="polaroid__title">{{ show.title }}</h3>
-        <p class="polaroid__translator">{{ content.translator }}: {{ show.translator }} · {{ platform.title }}</p>
-      </div>
+    <ShowArt class="polaroid__photo" :show="show">
+      <span class="polaroid__platform">{{ platform.title }}</span>
+    </ShowArt>
+    <div class="polaroid__caption">
+      <h3 class="polaroid__title">{{ show.title }}</h3>
+      <p class="polaroid__translator">
+        <BaseIcon name="mic" :size="14" />
+        {{ content.translator }}: {{ show.translator }}
+      </p>
     </div>
     <ul class="polaroid__events">
-      <EventRow v-for="kind in kinds" :key="kind" :show="show" :kind="kind" :now-minutes="nowMinutes" :quiet="kind === 'repeat'" />
+      <EventRow v-for="kind in content.kindOrder" :key="kind" :show="show" :kind="kind" :now-minutes="nowMinutes" />
     </ul>
   </article>
 </template>
 
 <style lang="scss">
 .polaroid {
-  padding: var(--space-4);
+  position: relative;
+  padding: var(--space-3);
   background: var(--color-surface);
   border: var(--border-hairline) solid var(--color-line);
   border-radius: var(--radius-lg);
+  box-shadow: 0 18px 40px -28px var(--color-shadow);
+  animation: polaroid-drop var(--duration-slow) var(--ease-spring) both;
 
-  &__lead {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
+  &__platform {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(252, 250, 244, 0.22);
+    border: var(--border-hairline) solid rgba(252, 250, 244, 0.35);
+    backdrop-filter: blur(8px);
+    @include eyebrow;
+    font-size: var(--fs-xxs);
+    color: var(--color-cream);
   }
 
-  &__copy {
-    min-width: 0;
+  &__caption {
+    padding: var(--space-4) var(--space-1) var(--space-1);
   }
 
   &__title {
-    font-family: var(--font-sans);
-    font-size: var(--fs-xl);
+    font-family: var(--font-serif);
+    font-size: var(--fs-xxl);
     font-weight: 600;
-    line-height: 1.15;
+    line-height: 1.02;
     color: var(--color-ink);
   }
 
   &__translator {
-    margin-top: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-2);
     font-size: var(--fs-sm);
-    color: var(--color-ink-soft);
+    color: var(--color-ink-muted);
   }
 
   &__events {
-    margin-top: var(--space-2);
+    padding: 0 var(--space-1);
+  }
+}
+
+@keyframes polaroid-drop {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
   }
 }
 </style>

@@ -16,7 +16,7 @@ const rules = content.rules
 </script>
 
 <template>
-  <BaseSheet :open="open" :title="rules.title" @close="$emit('close')">
+  <BaseSheet :open="open" :eyebrow="rules.eyebrow" :title="rules.title" @close="$emit('close')">
     <p class="rules__intro">{{ rules.intro }}</p>
     <section v-for="(section, s) in rules.sections" :key="section.title" :class="mod('rules__section', { [section.tone]: true })" :style="{ animationDelay: `${140 + s * 120}ms` }">
       <h3 class="rules__heading">

@@ -9,22 +9,23 @@ const props = defineProps({
   show: { type: Object, required: true },
   kind: { type: String, required: true },
   nowMinutes: { type: Number, default: null },
-  quiet: { type: Boolean, default: false },
 })
 
 const clock = computed(() => props.show.times[props.kind])
 const meta = computed(() => content.kinds[props.kind])
-const status = computed(() => (props.nowMinutes === null ? null : eventStatus(clock.value, props.nowMinutes, props.kind)))
+const status = computed(() => (props.nowMinutes === null ? null : eventStatus(clock.value, props.nowMinutes)))
 </script>
 
 <template>
-  <li :class="mod('event', { [status?.state]: Boolean(status), quiet })">
+  <li :class="mod('event', { [status?.state]: Boolean(status) })">
     <span class="event__time">{{ clock }}</span>
     <div class="event__body">
-      <span class="event__title">{{ meta.short }}</span>
-      <span v-if="status" class="event__status">{{ status.label }}</span>
+      <span class="event__title">
+        {{ meta.short }}
+      </span>
+      <span class="event__status">{{ status?.label ?? 'Напомнить о показе' }}</span>
     </div>
-    <ReminderBell :show-id="show.id" :kind="kind" :variant="quiet ? 'quiet' : 'pill'" />
+    <ReminderBell :show-id="show.id" :kind="kind" variant="icon" :hint="`${show.title}, ${meta.short}, ${clock}`" />
   </li>
 </template>
 
@@ -33,31 +34,22 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) 0;
+  padding: 12px 0;
+  min-height: 66px;
   color: var(--color-ink);
 
   & + & {
-    border-top: var(--border-hairline) dashed var(--color-line);
+    border-top: var(--border-hairline) solid var(--color-line);
   }
 
   &__time {
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: var(--fs-xl);
     font-weight: 600;
     line-height: 1;
     font-variant-numeric: tabular-nums;
-  }
-
-  &--quiet &__time {
-    font-size: var(--fs-md);
-    font-weight: 600;
-    color: var(--color-ink-soft);
-  }
-
-  &--quiet &__title,
-  &--quiet &__status {
-    color: var(--color-ink-muted);
-    font-weight: 500;
+    min-width: 78px;
+    font-size: 29px;
   }
 
   &__body {
@@ -74,7 +66,11 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
     gap: var(--space-2);
     font-size: var(--fs-sm);
     font-weight: 600;
-    white-space: nowrap;
+    line-height: 1.35;
+  }
+
+  &__mark {
+    margin-left: -4px;
   }
 
   &__status {
@@ -87,7 +83,7 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
     align-items: center;
     gap: 6px;
     color: var(--color-rose);
-    font-weight: 600;
+    font-weight: 700;
 
     &::before {
       content: '';
@@ -95,6 +91,7 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
       height: 7px;
       border-radius: 50%;
       background: currentColor;
+      animation: live-pulse 1.6s ease-in-out infinite;
     }
   }
 
@@ -104,4 +101,10 @@ const status = computed(() => (props.nowMinutes === null ? null : eventStatus(cl
   }
 }
 
+@keyframes live-pulse {
+  50% {
+    opacity: 0.3;
+    transform: scale(0.7);
+  }
+}
 </style>

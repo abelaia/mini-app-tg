@@ -23,10 +23,10 @@ const text = computed(() => props.label || (active.value ? content.bell.on : con
 </script>
 
 <template>
-  <button type="button" :class="mod('bell', { [variant]: true, active, busy })" :aria-pressed="active" @click.stop="toggle(showId, kind)">
+  <button type="button" :class="mod('bell', { [variant]: true, active, busy })" :aria-pressed="active" :aria-label="variant === 'icon' ? `${active ? 'Отключить' : 'Включить'} напоминание: ${hint}` : undefined" :disabled="busy" @click.stop="toggle(showId, kind)">
     <BaseIcon class="bell__icon" name="bell" :size="variant === 'chip' ? 14 : 16" :stroke="active ? 2 : 1.6" />
-    <span class="bell__label">{{ text }}</span>
-    <span v-if="hint" class="bell__hint">{{ hint }}</span>
+    <span v-if="variant !== 'icon'" class="bell__label">{{ text }}</span>
+    <span v-if="hint && variant !== 'icon'" class="bell__hint">{{ hint }}</span>
   </button>
 </template>
 
@@ -51,21 +51,23 @@ const text = computed(() => props.label || (active.value ? content.bell.on : con
     box-shadow: inset 0 0 0 var(--border-hairline) var(--color-line);
   }
 
-  &--chip {
-    height: 34px;
-    padding: 0 12px 0 10px;
-    font-size: var(--fs-sm);
-    background: var(--color-surface-muted);
-    color: var(--color-ink);
+  &--icon {
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--color-sage-soft);
+    color: var(--color-sage-deep);
+    .bell__icon { width: 21px; height: 21px; }
   }
 
-  &--quiet {
-    height: 32px;
-    padding: 0;
-    font-size: var(--fs-sm);
-    font-weight: 500;
-    color: var(--color-ink-muted);
-    background: transparent;
+  &--chip {
+    height: 30px;
+    padding: 0 10px 0 8px;
+    font-size: var(--fs-xs);
+    background: var(--color-surface-muted);
+    color: var(--color-ink-soft);
   }
 
   &--active {

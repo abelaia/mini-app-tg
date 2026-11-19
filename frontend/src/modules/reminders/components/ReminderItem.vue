@@ -45,7 +45,7 @@ defineEmits(['remove'])
   }
 
   &__title {
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: var(--fs-lg);
     font-weight: 600;
     line-height: 1.15;

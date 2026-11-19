@@ -1,21 +1,21 @@
 @use 'functions' as *;
 
 $colors-light: (
-  bg: #e6e1d6,
+  bg: #f3eee5,
   bg-glow-a: #c8d4b8,
   bg-glow-b: #e8d2cf,
-  surface: #f6f2ea,
+  surface: #fffcf6,
   surface-muted: #ede8df,
   surface-glass: rgba(246, 242, 234, 0.86),
-  ink: #2a211c,
+  ink: #302b26,
   ink-soft: #564a43,
-  ink-muted: #8a7f76,
+  ink-muted: #71675b,
   sage: #6f7d5e,
-  sage-deep: #4a5540,
-  sage-soft: #dce3d2,
-  rose: #7a2340,
+  sage-deep: #53644b,
+  sage-soft: #e6eadb,
+  rose: #792f45,
   rose-soft: #efd5da,
-  gold: #b89a5a,
+  'gold': #b89a5a,
   line: rgba(35, 38, 30, 0.1),
   shadow: rgba(48, 52, 38, 0.35),
   overlay: rgba(35, 38, 30, 0.38),
@@ -37,7 +37,7 @@ $colors-dark: (
   sage-soft: #303528,
   rose: #d48494,
   rose-soft: #3d262c,
-  gold: #d4b06a,
+  'gold': #d4b06a,
   line: rgba(236, 230, 214, 0.09),
   shadow: rgba(0, 0, 0, 0.7),
   overlay: rgba(0, 0, 0, 0.6),
@@ -59,14 +59,14 @@ $colors-static: (
 );
 
 $fonts: (
-  serif: "'Source Serif 4', 'Times New Roman', serif",
-  sans: "'Source Sans 3', -apple-system, 'Segoe UI', Roboto, sans-serif",
+  serif: "'Cormorant Garamond', 'Times New Roman', serif",
+  sans: "'Manrope', -apple-system, 'Segoe UI', Roboto, sans-serif",
   script: "'Great Vibes', cursive",
 );
 
 $font-sizes: (
-  xxs: fluid(12, 12),
-  xs: fluid(12, 13),
+  xxs: fluid(10, 11),
+  xs: fluid(11, 12),
   sm: fluid(13, 14),
   md: fluid(15, 16),
   lg: fluid(18, 20),
@@ -90,9 +90,9 @@ $spaces: (
 $radii: (
   xs: 6px,
   sm: 10px,
-  md: 12px,
-  lg: 12px,
-  xl: 16px,
+  md: 16px,
+  lg: 22px,
+  xl: 28px,
   pill: 999px,
 );
 

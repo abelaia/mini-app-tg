@@ -57,7 +57,7 @@ async function retryAdmin() {
 
 <template>
   <section class="admin">
-    <SectionHeading :title="content.title" :text="content.hint" />
+    <SectionHeading :eyebrow="content.eyebrow" :title="content.title" :text="content.hint" />
 
     <EmptyState v-if="session.ready && !session.isAdmin" icon="shield" :title="content.denied.title" :text="content.denied.text">
       <BaseButton variant="ghost" @click="goHome">На «Сегодня»</BaseButton>

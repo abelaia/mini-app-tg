@@ -38,9 +38,10 @@ defineProps({
     margin: 0 auto;
     padding: var(--space-1);
     border-radius: var(--radius-xl);
-    background: var(--color-surface);
+    background: var(--color-surface-glass);
     border: var(--border-hairline) solid var(--color-line);
-    box-shadow: 0 10px 24px -16px var(--color-shadow);
+    box-shadow: 0 20px 40px -20px var(--color-shadow);
+    backdrop-filter: blur(18px) saturate(1.2);
     pointer-events: auto;
   }
 
@@ -77,15 +78,28 @@ defineProps({
     border-radius: var(--radius-pill);
     background: var(--color-rose);
     color: var(--color-cream);
-    font-size: var(--fs-xxs);
+    font-size: 10px;
     font-weight: 700;
     line-height: 16px;
     text-align: center;
   }
 
   &__label {
-    font-size: var(--fs-xs);
+    font-size: var(--fs-xxs);
     font-weight: 600;
+    letter-spacing: 0.02em;
   }
+}
+</style>
+
+<style lang="scss">
+.tabbar {
+  padding: 0 0 var(--safe-bottom); background: var(--color-surface);
+  border-top: 1px solid var(--color-line); pointer-events: auto;
+  &__inner { max-width: 520px; background: none; border: 0; box-shadow: none; backdrop-filter: none; border-radius: 0; padding: 8px 12px; }
+  &__item { min-width: 0; border-radius: 0; gap: 5px; }
+  &__icon-wrap { display: grid; place-items: center; width: 42px; height: 30px; border-radius: 10px; }
+  &__item--active { background: none; color: var(--color-sage-deep); .tabbar__icon-wrap { background: var(--color-sage-soft); } }
+  &__label { font-size: 10px; font-weight: 500; letter-spacing: 0; }
 }
 </style>
