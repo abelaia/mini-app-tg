@@ -5,6 +5,7 @@ import { setupTelegram } from '@/shared/telegram/telegram'
 import { useBackButton } from '@/shared/telegram/useBackButton'
 import { useTelegramTheme } from '@/shared/telegram/useTelegramTheme'
 import AppHeader from '@/shared/ui/AppHeader.vue'
+import AppBackground from '@/shared/ui/AppBackground.vue'
 import TabBar from '@/shared/ui/TabBar.vue'
 import ToastHost from '@/shared/ui/ToastHost.vue'
 import { useSessionStore } from './sessionStore'
@@ -26,6 +27,7 @@ onMounted(() => {
 
 <template>
   <div class="app">
+    <AppBackground />
     <AppHeader />
     <main class="app__main">
       <RouterView v-slot="{ Component }">
@@ -41,6 +43,7 @@ onMounted(() => {
 
 <style lang="scss">
 .app {
+  isolation: isolate;
   min-height: var(--tg-viewport-stable-height, 100vh);
 
   &__main {

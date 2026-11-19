@@ -22,7 +22,7 @@
   background: var(--color-surface);
   border: var(--border-hairline) solid var(--color-line);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 20px -16px var(--color-shadow);
+  box-shadow: 0 1px 0 var(--color-line), 0 18px 40px -28px var(--color-shadow);
 }
 
 @mixin grain($opacity: 0.35) {
@@ -42,8 +42,8 @@
   font-family: var(--font-sans);
   font-size: var(--fs-xs);
   font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
 }
 
 @mixin line-clamp($lines: 2) {
