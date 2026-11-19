@@ -13,6 +13,11 @@ backend/server.exe
 .pgdata/
 
 # Local design notes and visual checks
+/.claude/
+/.agents/
+/.codex/
+**/AGENTS.md
+**/CLAUDE.md
 /.impeccable/
 /PRODUCT.md
 /DESIGN.md
