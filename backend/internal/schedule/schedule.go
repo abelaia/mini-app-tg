@@ -36,6 +36,7 @@ type Platform struct {
 }
 
 type Show struct {
+	Artwork    *Artwork        `json:"artwork,omitempty"`
 	ID         string          `json:"id"`
 	Title      string          `json:"title"`
 	Translator string          `json:"translator"`
@@ -44,6 +45,12 @@ type Show struct {
 	Icon       string          `json:"icon"`
 	Times      map[Kind]string `json:"times"`
 	Enabled    *bool           `json:"enabled,omitempty"`
+}
+
+type Artwork struct {
+	URL  string `json:"url"`
+	Role string `json:"role"`
+	Fit  string `json:"fit"`
 }
 
 func (s Show) IsEnabled() bool {

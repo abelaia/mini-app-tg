@@ -17,14 +17,15 @@ const kinds = computed(() => content.kindOrder.filter(kind => props.show.times?.
 
 <template>
   <article :class="['schedule-card', { 'schedule-card--featured': featured }]">
-    <div v-if="featured" class="schedule-card__cover">
-      <div class="schedule-card__cover-copy">
+    <div v-if="featured || show.artwork?.role === 'banner'" :class="['schedule-card__cover', { 'schedule-card__cover--banner': show.artwork?.role === 'banner' }]">
+      <div v-if="show.artwork?.role !== 'banner'" class="schedule-card__cover-copy">
         <span class="schedule-card__platform">{{ platform.title }}</span>
         <p>Перевод<br />{{ show.translator }}</p>
       </div>
       <ShowArt :show="show" />
     </div>
     <div class="schedule-card__content">
+      <ShowArt v-if="!featured && show.artwork?.role === 'icon'" class="schedule-card__icon" :show="show" size="medallion" />
       <h3 class="schedule-card__title">{{ show.title }}</h3>
       <p class="schedule-card__meta">{{ show.translator }} · {{ platform.title }}</p>
       <ul class="schedule-card__events">
@@ -50,6 +51,8 @@ const kinds = computed(() => content.kindOrder.filter(kind => props.show.times?.
     .art__image { padding: 0; }
   }
   &__platform { font-size: 12px; font-weight: 600; }
+  &__cover--banner { display: block; padding: 0; min-height: 0; .art { aspect-ratio: 16/9; width: 100%; } }
+  &__icon { margin-bottom: 12px; border-radius: 12px; }
   &__cover-copy p {
     margin-top: 20px;
     font: 500 29px/1.12 var(--font-serif);

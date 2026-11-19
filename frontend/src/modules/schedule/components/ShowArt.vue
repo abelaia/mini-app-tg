@@ -1,16 +1,18 @@
 <script setup>
 import { showPoster } from '@/shared/lib/media'
 import { mod } from '@/shared/lib/text'
+import { computed } from 'vue'
 
 const props = defineProps({
   show: { type: Object, required: true },
   size: { type: String, default: 'photo' },
 })
+const source = computed(() => props.show.artwork?.url ? `${import.meta.env.VITE_API_URL ?? ''}${props.show.artwork.url}` : showPoster(props.show.id))
 </script>
 
 <template>
-  <figure :class="mod('art', { [size]: true })">
-    <img class="art__image" :src="showPoster(show.id)" alt="" loading="lazy" decoding="async" />
+  <figure :class="[mod('art', { [size]: true }), { 'art--custom': show.artwork }]">
+    <img class="art__image" :src="source" :style="show.artwork ? { objectFit: show.artwork.fit, padding: 0 } : undefined" alt="" loading="lazy" decoding="async" />
     <slot />
   </figure>
 </template>
@@ -37,6 +39,11 @@ const props = defineProps({
     border: var(--border-hairline) solid var(--color-line);
     box-shadow: 0 8px 18px -12px var(--color-shadow);
     background: var(--color-surface);
+  }
+
+  &--custom.art--medallion {
+    border-radius: 12px;
+    box-shadow: none;
   }
 
   &__image {
