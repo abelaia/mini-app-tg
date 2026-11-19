@@ -24,7 +24,7 @@ export const useRemindersStore = defineStore('reminders', () => {
       status.value = 'ready'
     } catch {
       items.value = []
-      status.value = 'ready'
+      status.value = 'error'
     }
   }
 
