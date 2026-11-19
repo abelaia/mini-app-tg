@@ -3,6 +3,11 @@
 **/.git/**
 **/.pgdata/**
 .impeccable/
+.claude/
+.agents/
+.codex/
+**/AGENTS.md
+**/CLAUDE.md
 docs/
 PRODUCT.md
 DESIGN.md
