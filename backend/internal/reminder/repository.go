@@ -1,108 +1,108 @@
 package reminder
 
 import (
-	"context"
-	"database/sql"
-	"time"
+    "context"
+    "database/sql"
+    "time"
 
-	"github.com/abelaia/mini-app-tg/backend/internal/schedule"
+    "github.com/abelaia/mini-app-tg/backend/internal/schedule"
 )
 
 type Reminder struct {
-	ID        int64         `json:"id"`
-	ShowID    string        `json:"showId"`
-	Kind      schedule.Kind `json:"kind"`
-	CreatedAt time.Time     `json:"createdAt"`
+    ID        int64         `json:"id"`
+    ShowID    string        `json:"showId"`
+    Kind      schedule.Kind `json:"kind"`
+    CreatedAt time.Time     `json:"createdAt"`
 }
 
 type Recipient struct {
-	ReminderID int64
-	UserID     int64
+    ReminderID int64
+    UserID     int64
 }
 
 type Repository struct {
-	db *sql.DB
+    db *sql.DB
 }
 
 func NewRepository(db *sql.DB) *Repository {
-	return &Repository{db: db}
+    return &Repository{db: db}
 }
 
 func (r *Repository) List(ctx context.Context, userID int64) ([]Reminder, error) {
-	rows, err := r.db.QueryContext(ctx, `
-		SELECT id, show_id, kind, created_at FROM reminders
-		WHERE user_id = $1 ORDER BY created_at`, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	out := []Reminder{}
-	for rows.Next() {
-		var rem Reminder
-		var created int64
-		if err := rows.Scan(&rem.ID, &rem.ShowID, &rem.Kind, &created); err != nil {
-			return nil, err
-		}
-		rem.CreatedAt = time.Unix(created, 0)
-		out = append(out, rem)
-	}
-	return out, rows.Err()
+    rows, err := r.db.QueryContext(ctx, `
+        SELECT id, show_id, kind, created_at FROM reminders
+        WHERE user_id = $1 ORDER BY created_at`, userID)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+    out := []Reminder{}
+    for rows.Next() {
+        var rem Reminder
+        var created int64
+        if err := rows.Scan(&rem.ID, &rem.ShowID, &rem.Kind, &created); err != nil {
+            return nil, err
+        }
+        rem.CreatedAt = time.Unix(created, 0)
+        out = append(out, rem)
+    }
+    return out, rows.Err()
 }
 
 func (r *Repository) Create(ctx context.Context, userID int64, showID string, kind schedule.Kind) (Reminder, error) {
-	now := time.Now().Unix()
-	if _, err := r.db.ExecContext(ctx, `
-		INSERT INTO reminders (user_id, show_id, kind, created_at) VALUES ($1, $2, $3, $4)
-		ON CONFLICT (user_id, show_id, kind) DO NOTHING`, userID, showID, kind, now); err != nil {
-		return Reminder{}, err
-	}
-	rem := Reminder{ShowID: showID, Kind: kind}
-	var created int64
-	err := r.db.QueryRowContext(ctx, `
-		SELECT id, created_at FROM reminders WHERE user_id = $1 AND show_id = $2 AND kind = $3`,
-		userID, showID, kind).Scan(&rem.ID, &created)
-	rem.CreatedAt = time.Unix(created, 0)
-	return rem, err
+    now := time.Now().Unix()
+    if _, err := r.db.ExecContext(ctx, `
+        INSERT INTO reminders (user_id, show_id, kind, created_at) VALUES ($1, $2, $3, $4)
+        ON CONFLICT (user_id, show_id, kind) DO NOTHING`, userID, showID, kind, now); err != nil {
+        return Reminder{}, err
+    }
+    rem := Reminder{ShowID: showID, Kind: kind}
+    var created int64
+    err := r.db.QueryRowContext(ctx, `
+        SELECT id, created_at FROM reminders WHERE user_id = $1 AND show_id = $2 AND kind = $3`,
+        userID, showID, kind).Scan(&rem.ID, &created)
+    rem.CreatedAt = time.Unix(created, 0)
+    return rem, err
 }
 
 func (r *Repository) Delete(ctx context.Context, userID, id int64) (bool, error) {
-	res, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE id = $1 AND user_id = $2`, id, userID)
-	if err != nil {
-		return false, err
-	}
-	n, err := res.RowsAffected()
-	return n > 0, err
+    res, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE id = $1 AND user_id = $2`, id, userID)
+    if err != nil {
+        return false, err
+    }
+    n, err := res.RowsAffected()
+    return n > 0, err
 }
 
 func (r *Repository) DeleteAll(ctx context.Context, userID int64) error {
-	_, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE user_id = $1`, userID)
-	return err
+    _, err := r.db.ExecContext(ctx, `DELETE FROM reminders WHERE user_id = $1`, userID)
+    return err
 }
 
 func (r *Repository) Due(ctx context.Context, showID string, kind schedule.Kind, fireAt time.Time) ([]Recipient, error) {
-	rows, err := r.db.QueryContext(ctx, `
-		SELECT r.id, r.user_id FROM reminders r
-		JOIN users u ON u.id = r.user_id
-		WHERE r.show_id = $1 AND r.kind = $2
-			AND r.last_sent_at < $3 AND r.created_at < $4
-			AND NOT u.is_blocked`,
-		showID, kind, fireAt.Unix(), fireAt.Unix())
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var out []Recipient
-	for rows.Next() {
-		var rec Recipient
-		if err := rows.Scan(&rec.ReminderID, &rec.UserID); err != nil {
-			return nil, err
-		}
-		out = append(out, rec)
-	}
-	return out, rows.Err()
+    rows, err := r.db.QueryContext(ctx, `
+        SELECT r.id, r.user_id FROM reminders r
+        JOIN users u ON u.id = r.user_id
+        WHERE r.show_id = $1 AND r.kind = $2
+            AND r.last_sent_at < $3 AND r.created_at < $4
+            AND NOT u.is_blocked`,
+        showID, kind, fireAt.Unix(), fireAt.Unix())
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+    var out []Recipient
+    for rows.Next() {
+        var rec Recipient
+        if err := rows.Scan(&rec.ReminderID, &rec.UserID); err != nil {
+            return nil, err
+        }
+        out = append(out, rec)
+    }
+    return out, rows.Err()
 }
 
 func (r *Repository) MarkSent(ctx context.Context, id int64, at time.Time) error {
-	_, err := r.db.ExecContext(ctx, `UPDATE reminders SET last_sent_at = $1 WHERE id = $2`, at.Unix(), id)
-	return err
+    _, err := r.db.ExecContext(ctx, `UPDATE reminders SET last_sent_at = $1 WHERE id = $2`, at.Unix(), id)
+    return err
 }

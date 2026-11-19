@@ -6,12 +6,12 @@
 
 ## Что нужно установить
 
-| Что | Версия | Зачем |
-|---|---|---|
-| [Go](https://go.dev/dl/) | 1.27+ | бэкенд |
-| [Node.js](https://nodejs.org/) | 22+ | фронтенд |
-| [PostgreSQL](https://www.postgresql.org/download/) | 17 | база данных |
-| [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) | любая | только для проверки в Telegram |
+| Что                                                                                                     | Версия | Зачем                          |
+| ------------------------------------------------------------------------------------------------------- | ------ | ------------------------------ |
+| [Go](https://go.dev/dl/)                                                                                | 1.27+  | бэкенд                         |
+| [Node.js](https://nodejs.org/)                                                                          | 22+    | фронтенд                       |
+| [PostgreSQL](https://www.postgresql.org/download/)                                                      | 17     | база данных                    |
+| [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) | любая  | только для проверки в Telegram |
 
 Команды ниже — для Git Bash на Windows. Если PostgreSQL стоит в другой папке, поправь путь в `PG=...`.
 
@@ -63,19 +63,19 @@ Mini App открывается только по HTTPS, поэтому лока
 
 1. Создай бота у [@BotFather](https://t.me/BotFather) командой `/newbot` и скопируй токен.
 2. Собери фронтенд — бэкенд будет раздавать его сам, тогда хватит одного туннеля:
-   ```bash
-   cd frontend && npm run build
-   ```
+    ```bash
+    cd frontend && npm run build
+    ```
 3. Запусти туннель в отдельном терминале и скопируй адрес вида `https://....trycloudflare.com`:
-   ```bash
-   cloudflared tunnel --url http://localhost:8080
-   ```
+    ```bash
+    cloudflared tunnel --url http://localhost:8080
+    ```
 4. Заполни `backend/.env`:
-   ```
-   BOT_TOKEN=токен_от_BotFather
-   WEBAPP_URL=https://....trycloudflare.com
-   STATIC_DIR=../frontend/dist
-   ```
+    ```
+    BOT_TOKEN=токен_от_BotFather
+    WEBAPP_URL=https://....trycloudflare.com
+    STATIC_DIR=../frontend/dist
+    ```
 5. Перезапусти бэкенд (`go run ./cmd/server`), открой бота в Telegram и нажми `/start` → «Открыть».
 
 Адрес `trycloudflare.com` меняется при каждом запуске туннеля — после перезапуска обнови `WEBAPP_URL` и перезапусти бэкенд.
@@ -84,21 +84,21 @@ Mini App открывается только по HTTPS, поэтому лока
 
 Все лежат в `backend/.env` (файл не попадает в git), образец — `backend/.env.example`.
 
-| Переменная | По умолчанию | Что это |
-|---|---|---|
-| `APP_ENV` | `prod` | `dev` — пускает без Telegram от имени `DEV_USER_ID` и не требует `BOT_TOKEN` |
-| `HTTP_ADDR` | `:8080` | адрес сервера (или `PORT`, как на Render) |
-| `DATABASE_URL` | — | **обязательно**, строка подключения к PostgreSQL |
-| `BOT_TOKEN` | — | токен бота; в `prod` обязателен |
-| `WEBAPP_URL` | — | HTTPS-адрес мини-приложения для кнопки «Открыть» |
-| `SCHEDULE_PATH` | `data/schedule.json` | расписание сериалов |
-| `STATIC_DIR` | — | папка собранного фронтенда, если раздавать его с бэкенда |
-| `ALLOWED_ORIGINS` | — | откуда разрешены запросы (CORS), через запятую |
-| `INIT_DATA_TTL` | `24h` | сколько живёт подпись Telegram |
-| `REMIND_BEFORE` | `10m` | за сколько до эфира присылать напоминание |
-| `BOT_MODE` | `auto` | `auto` - вебхук, если задан `WEBAPP_URL`, иначе long polling; можно явно `webhook` или `polling` |
-| `DEV_USER_ID` | `0` | тестовый пользователь для `APP_ENV=dev` |
-| `ADMIN_IDS` | — | Telegram user id админов через запятую; у них в мини-приложении вкладка «Админ». В `dev` при пустом списке берётся `DEV_USER_ID` |
+| Переменная        | По умолчанию         | Что это                                                                                                                          |
+| ----------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `APP_ENV`         | `prod`               | `dev` — пускает без Telegram от имени `DEV_USER_ID` и не требует `BOT_TOKEN`                                                     |
+| `HTTP_ADDR`       | `:8080`              | адрес сервера (или `PORT`, как на Render)                                                                                        |
+| `DATABASE_URL`    | —                    | **обязательно**, строка подключения к PostgreSQL                                                                                 |
+| `BOT_TOKEN`       | —                    | токен бота; в `prod` обязателен                                                                                                  |
+| `WEBAPP_URL`      | —                    | HTTPS-адрес мини-приложения для кнопки «Открыть»                                                                                 |
+| `SCHEDULE_PATH`   | `data/schedule.json` | расписание сериалов                                                                                                              |
+| `STATIC_DIR`      | —                    | папка собранного фронтенда, если раздавать его с бэкенда                                                                         |
+| `ALLOWED_ORIGINS` | —                    | откуда разрешены запросы (CORS), через запятую                                                                                   |
+| `INIT_DATA_TTL`   | `24h`                | сколько живёт подпись Telegram                                                                                                   |
+| `REMIND_BEFORE`   | `10m`                | за сколько до эфира присылать напоминание                                                                                        |
+| `BOT_MODE`        | `auto`               | `auto` - вебхук, если задан `WEBAPP_URL`, иначе long polling; можно явно `webhook` или `polling`                                 |
+| `DEV_USER_ID`     | `0`                  | тестовый пользователь для `APP_ENV=dev`                                                                                          |
+| `ADMIN_IDS`       | —                    | Telegram user id админов через запятую; у них в мини-приложении вкладка «Админ». В `dev` при пустом списке берётся `DEV_USER_ID` |
 
 ## Тесты
 
