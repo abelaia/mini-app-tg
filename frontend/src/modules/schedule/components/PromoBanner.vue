@@ -5,7 +5,14 @@ import { useScheduleStore } from '../store'
 
 const schedule = useScheduleStore()
 
-const promo = computed(() => schedule.promo ?? content.promo)
+// After a successful schedule load, trust the API (incl. enabled:false).
+// Static content.promo is only a fallback before/without API data.
+const promo = computed(() => {
+  const fromApi = schedule.promo
+  if (fromApi) return fromApi.enabled === false ? null : fromApi
+  if (schedule.status === 'ready') return null
+  return content.promo
+})
 </script>
 
 <template>
