@@ -10,9 +10,9 @@
     const { theme, setTheme } = useTelegramTheme()
 
     function selectTheme(value) {
-        if (theme.value === value) return
+        const changed = theme.value !== value
         setTheme(value)
-        haptic.select()
+        if (changed) haptic.select()
     }
 </script>
 

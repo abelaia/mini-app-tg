@@ -39,8 +39,16 @@ export function validateSchedule(schedule) {
         add(`${path}.day`, show.day, [oneOf(WEEK)])
         add(`${path}.platform`, show.platform, [oneOf(Object.keys(schedule.platforms ?? {}))])
         add(`${path}.icon`, show.icon, [oneOf(ICON_OPTIONS)])
-        for (const kind of ['repeat', 'premiere'])
+        for (const kind of ['repeat', 'premiere']) {
             add(`${path}.times.${kind}`, show.times?.[kind], [required, clock])
+            const end = show.endTimes?.[kind]
+            if (end) {
+                add(`${path}.endTimes.${kind}`, end, [clock])
+                if (end === show.times?.[kind]) {
+                    errors[`${path}.endTimes.${kind}`] = 'Окончание должно отличаться от начала'
+                }
+            }
+        }
         const id = text(show.id)
         if (id && ids.has(id)) {
             errors[`${path}.id`] = 'Этот ID уже используется другим сериалом'

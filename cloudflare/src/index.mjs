@@ -123,9 +123,10 @@ export async function handleRequest(request, env) {
             await env.DB.prepare('UPDATE users SET is_blocked = 0 WHERE id = ?')
                 .bind(message.from.id)
                 .run()
-            const result = await telegramSend(env, {
+            const welcome = {
                 chat_id: message.chat.id,
-                text: 'Привет! Это TürkDiziOnline 🌹\n\nЗдесь расписание онлайн-переводов турецких сериалов. Включи напоминания, и я напишу перед началом эфира.',
+                text: 'Привет! Это TürkDiziOnline <tg-emoji emoji-id="5427232022252764138">❤️‍🔥</tg-emoji>\n\nЗдесь расписание онлайн-переводов турецких сериалов <tg-emoji emoji-id="5384206341256521018">🇹🇷</tg-emoji>\nВключи напоминания, и я напишу перед началом эфира ☺️',
+                parse_mode: 'HTML',
                 ...(env.WEBAPP_URL
                     ? {
                           reply_markup: {
@@ -140,7 +141,15 @@ export async function handleRequest(request, env) {
                           },
                       }
                     : {}),
-            })
+            }
+            let result = await telegramSend(env, welcome)
+            if (!result.ok && result.code === 400) {
+                result = await telegramSend(env, {
+                    ...welcome,
+                    text: 'Привет! Это TürkDiziOnline ❤️‍🔥\n\nЗдесь расписание онлайн-переводов турецких сериалов 🇹🇷\nВключи напоминания, и я напишу перед началом эфира ☺️',
+                    parse_mode: undefined,
+                })
+            }
             if (!result.ok && result.code !== 403) {
                 return json({ error: 'telegram unavailable' }, 502)
             }

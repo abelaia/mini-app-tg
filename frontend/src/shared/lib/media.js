@@ -1,23 +1,12 @@
 const asset = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 
-export const showPoster = (showId) => asset(`assets/shows/${showId}.webp`)
-
-const newShowFrames = {
-    'polovina-mareri': '0 0 650 675',
-    seventeen: '650 140 604 540',
-    'klyukvennyy-sherbet': '335 680 650 555',
+const showArtworkFiles = {
+    seventeen: 'eshche-17',
+    'polovina-mareri': 'polovina-materi',
 }
 
-export function showPosterSprite(showId) {
-    const viewBox = newShowFrames[showId]
-    if (!viewBox) return null
-    const [x, y, width, height] = viewBox.split(' ').map(Number)
-    return {
-        src: asset('assets/shows/new-shows-sheet.png'),
-        viewBox,
-        clip: { x, y, width, height },
-    }
-}
+export const showPoster = (showId) =>
+    asset(`assets/shows/${showArtworkFiles[showId] ?? showId}.webp`)
 
 export const brandAvatar = asset('assets/brand/avatar.webp')
 

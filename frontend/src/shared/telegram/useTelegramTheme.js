@@ -1,9 +1,14 @@
 import { ref } from 'vue'
-import { onThemeChange, paintChrome } from './telegram'
+import { colorScheme, onThemeChange, paintChrome } from './telegram'
 
 const theme = ref('light')
 const STORAGE_KEY = 'turkdizi-theme'
 let initialized = false
+let preference = null
+
+function savedTheme(value) {
+    return value === 'light' || value === 'dark' ? value : null
+}
 
 function apply() {
     const root = document.documentElement
@@ -15,6 +20,7 @@ function apply() {
 
 function setTheme(next) {
     if (next !== 'light' && next !== 'dark') return
+    preference = next
     theme.value = next
     apply()
     try {
@@ -24,21 +30,25 @@ function setTheme(next) {
     }
 }
 
+function syncTheme() {
+    theme.value = preference ?? colorScheme()
+    apply()
+}
+
 export function useTelegramTheme() {
     if (!initialized) {
         initialized = true
         try {
-            theme.value = localStorage.getItem(STORAGE_KEY) === 'dark' ? 'dark' : 'light'
+            preference = savedTheme(localStorage.getItem(STORAGE_KEY))
         } catch {
-            theme.value = 'light'
+            preference = null
         }
-        apply()
-        // Telegram may repaint its chrome; keep the user's explicit app preference.
-        onThemeChange(apply)
+        syncTheme()
+        onThemeChange(syncTheme)
         window.addEventListener('storage', (event) => {
-            if (event.key !== STORAGE_KEY) return
-            theme.value = event.newValue === 'dark' ? 'dark' : 'light'
-            apply()
+            if (event.key !== STORAGE_KEY && event.key !== null) return
+            preference = savedTheme(event.newValue)
+            syncTheme()
         })
     }
     return { theme, setTheme }

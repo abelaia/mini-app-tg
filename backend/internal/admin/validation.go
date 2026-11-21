@@ -96,6 +96,15 @@ func validateSchedule(s schedule.Schedule) error {
                 e[key+".times"] = "Неизвестный тип показа"
             }
         }
+        for kind, clock := range show.EndTimes {
+            if !kind.Valid() {
+                e[key+".endTimes"] = "Неизвестный тип показа"
+            } else if _, err := time.Parse("15:04", clock); err != nil || len(clock) != 5 {
+                e[key+".endTimes."+string(kind)] = "Укажите время от 00:00 до 23:59"
+            } else if clock == show.Times[kind] {
+                e[key+".endTimes."+string(kind)] = "Окончание должно отличаться от начала"
+            }
+        }
     }
     if len(e) > 0 {
         return e

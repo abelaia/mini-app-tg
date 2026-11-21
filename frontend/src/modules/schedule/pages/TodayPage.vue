@@ -11,6 +11,7 @@
     import BaseIcon from '@/shared/ui/BaseIcon.vue'
     import ShowRow from '../components/ShowRow.vue'
     import content from '../content.json'
+    import { broadcastDuration, broadcastTiming } from '../lib/broadcastTiming'
     import { useScheduleStore } from '../store'
 
     const UPCOMING_LIMIT = 3
@@ -18,7 +19,22 @@
     const schedule = useScheduleStore()
     const { zoned, dateLabel } = useNow()
 
-    const todayShows = computed(() => schedule.byDay[zoned.value.day] ?? [])
+    const todayShows = computed(() => {
+        const previous = schedule.byDay[shiftDay(zoned.value.day, -1)] ?? []
+        const continuing = previous.filter((show) =>
+            content.kindOrder.some(
+                (kind) =>
+                    show.times?.[kind] &&
+                    broadcastTiming(
+                        show.times[kind],
+                        zoned.value.minutes + 1440,
+                        show.endTimes?.[kind],
+                        broadcastDuration(kind),
+                    ).state === 'live',
+            ),
+        )
+        return [...continuing, ...(schedule.byDay[zoned.value.day] ?? [])]
+    })
 
     const upcoming = computed(() =>
         [1, 2, 3, 4, 5, 6]
@@ -61,13 +77,23 @@
                 v-if="todayShows.length"
                 class="today__stack"
             >
-                <ScheduleCard
+                <div
                     v-for="(show, i) in todayShows"
                     :key="show.id"
-                    :show="show"
-                    :featured="i === 0"
-                    :now-minutes="zoned.minutes"
-                />
+                    class="today__show"
+                >
+                    <p
+                        v-if="show.day !== zoned.day"
+                        class="today__carryover"
+                    >
+                        Эфир начался вчера
+                    </p>
+                    <ScheduleCard
+                        :show="show"
+                        :featured="i === 0"
+                        :now-minutes="zoned.minutes + (show.day === zoned.day ? 0 : 1440)"
+                    />
+                </div>
             </div>
             <div
                 v-else
@@ -197,6 +223,12 @@
             border: 0;
             border-radius: 0;
             gap: 24px;
+        }
+
+        &__carryover {
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: var(--color-ink-muted);
         }
 
         &__empty {

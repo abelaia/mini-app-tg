@@ -11,6 +11,7 @@ const blankShow = () => ({
     platform: 'vk',
     icon: 'rose',
     times: { repeat: '20:00', premiere: '21:00' },
+    endTimes: { repeat: '', premiere: '' },
     enabled: true,
 })
 
@@ -35,6 +36,10 @@ export const useAdminStore = defineStore('admin', () => {
                 shows: (nextSchedule.shows ?? []).map((show) => ({
                     ...show,
                     enabled: show.enabled !== false,
+                    endTimes: {
+                        repeat: show.endTimes?.repeat ?? '',
+                        premiere: show.endTimes?.premiere ?? '',
+                    },
                     times: {
                         repeat: show.times?.repeat ?? '20:00',
                         premiere: show.times?.premiere ?? '21:00',
@@ -80,6 +85,9 @@ export const useAdminStore = defineStore('admin', () => {
                         repeat: show.times.repeat,
                         premiere: show.times.premiere,
                     },
+                    endTimes: Object.fromEntries(
+                        Object.entries(show.endTimes ?? {}).filter(([, time]) => time),
+                    ),
                     enabled: Boolean(show.enabled),
                 })),
             }
@@ -89,6 +97,10 @@ export const useAdminStore = defineStore('admin', () => {
                 shows: (saved.shows ?? []).map((show) => ({
                     ...show,
                     enabled: show.enabled !== false,
+                    endTimes: {
+                        repeat: show.endTimes?.repeat ?? '',
+                        premiere: show.endTimes?.premiere ?? '',
+                    },
                     times: {
                         repeat: show.times?.repeat ?? '20:00',
                         premiere: show.times?.premiere ?? '21:00',

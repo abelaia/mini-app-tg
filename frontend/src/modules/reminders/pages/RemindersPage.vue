@@ -6,6 +6,7 @@
     import SectionHeading from '@/shared/ui/SectionHeading.vue'
     import { useNow } from '@/shared/composables/useNow'
     import { fill } from '@/shared/lib/text'
+    import { isPreview } from '@/shared/lib/environment'
     import { dayOffset } from '@/shared/lib/time'
     import { useScheduleStore } from '@/modules/schedule/store'
     import scheduleContent from '@/modules/schedule/content.json'
@@ -41,7 +42,9 @@
     )
 
     const subtitle = computed(() =>
-        fill(content.subtitle, { minutes: schedule.remindBeforeMinutes }),
+        isPreview
+            ? 'Тестовый список сохраняется в этом браузере. Сообщения в Telegram не отправляются.'
+            : fill(content.subtitle, { minutes: schedule.remindBeforeMinutes }),
     )
 
     const retry = () => Promise.all([reminders.load(), schedule.load()])
@@ -102,8 +105,24 @@
         gap: var(--space-5);
 
         &__list {
-            @include card;
-            padding: var(--space-1) var(--space-4);
+            padding: 4px 18px;
+            border-radius: 16px;
+            border: 1px solid var(--color-line);
+            background: var(--color-card-paper);
+        }
+
+        .empty {
+            border-radius: 16px;
+            background: var(--color-card-paper);
+            box-shadow: none;
+            background-image:
+                linear-gradient(
+                    color-mix(in srgb, var(--color-card-paper) 94%, transparent),
+                    color-mix(in srgb, var(--color-card-paper) 94%, transparent)
+                ),
+                url('/assets/backgrounds/reminders.webp');
+            background-size: cover;
+            background-position: center;
         }
 
         &__clear {

@@ -12,6 +12,10 @@
     const { zoned, now } = useNow()
     const selectedDay = ref(zoned.value.day)
     const selectedShows = computed(() => schedule.byDay[selectedDay.value] ?? [])
+    const selectedNowMinutes = computed(() => {
+        const daysAgo = WEEK.indexOf(zoned.value.day) - WEEK.indexOf(selectedDay.value)
+        return daysAgo >= 0 ? zoned.value.minutes + daysAgo * 1440 : null
+    })
     const dates = computed(() => {
         const parts = Object.fromEntries(
             new Intl.DateTimeFormat('en-CA', {
@@ -89,7 +93,7 @@
                     v-for="show in selectedShows"
                     :key="show.id"
                     :show="show"
-                    :now-minutes="selectedDay === zoned.day ? zoned.minutes : null"
+                    :now-minutes="selectedNowMinutes"
                 />
             </div>
             <div
@@ -168,7 +172,7 @@
 
         &__picker {
             display: grid;
-            grid-template-columns: repeat(7, minmax(44px, 1fr));
+            grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 6px;
             overflow-x: auto;
             padding-bottom: 4px;
@@ -231,15 +235,14 @@
         }
 
         &__days {
-            padding: 20px;
-            gap: 24px;
-            background: var(--color-surface);
-            border-radius: 16px;
+            padding: 0;
+            gap: 18px;
+            background: transparent;
         }
 
         &__days .schedule-card + .schedule-card {
-            padding-top: 24px;
-            border-top: 1px solid var(--color-line);
+            padding-top: 0;
+            border-top: 0;
         }
 
         &__notes {

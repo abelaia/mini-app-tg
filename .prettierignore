@@ -17,3 +17,5 @@ DESIGN.md
 **/.env*
 frontend/public/assets/**
 !frontend/public/assets/schedule.json
+
+**/.cloudflare/**

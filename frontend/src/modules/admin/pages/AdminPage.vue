@@ -15,6 +15,7 @@
     import { useFormValidation } from '@/shared/composables/useFormValidation'
     import { ICON_OPTIONS, validatePromo, validateSchedule } from '../validation'
     import ArtworkEditor from '../components/ArtworkEditor.vue'
+    import ShowArt from '@/modules/schedule/components/ShowArt.vue'
 
     const session = useSessionStore()
     const admin = useAdminStore()
@@ -184,6 +185,17 @@
                         :disabled="admin.saving"
                         :aria-label="show.title || 'Новый сериал'"
                     >
+                        <div class="editor__identity">
+                            <div>
+                                <h2>{{ show.title || content.shows.empty }}</h2>
+                                <p>{{ show.translator || 'Переводчик пока не указан' }}</p>
+                            </div>
+                            <ShowArt
+                                v-if="schedule.showById[show.id] || show.artwork"
+                                :show="show"
+                                size="medallion"
+                            />
+                        </div>
                         <header class="editor__head">
                             <BaseField
                                 v-slot="{ attrs }"
@@ -314,6 +326,20 @@
                             </BaseField>
                             <BaseField
                                 v-slot="{ attrs }"
+                                label="Повтор: окончание"
+                                hint="Если пусто — через 1 час после начала."
+                                :error="showsValidation.error(`shows.${index}.endTimes.repeat`)"
+                                @blur="showsValidation.touch(`shows.${index}.endTimes.repeat`)"
+                            >
+                                <input
+                                    v-bind="attrs"
+                                    v-model="show.endTimes.repeat"
+                                    class="field__input"
+                                    type="time"
+                                />
+                            </BaseField>
+                            <BaseField
+                                v-slot="{ attrs }"
                                 :label="content.shows.fields.premiere"
                                 :error="showsValidation.error(`shows.${index}.times.premiere`)"
                                 @blur="showsValidation.touch(`shows.${index}.times.premiere`)"
@@ -324,6 +350,20 @@
                                     class="field__input"
                                     type="time"
                                     required
+                                />
+                            </BaseField>
+                            <BaseField
+                                v-slot="{ attrs }"
+                                label="Новая серия: окончание"
+                                hint="Если пусто — через 3 часа после начала. 00:00 означает полночь."
+                                :error="showsValidation.error(`shows.${index}.endTimes.premiere`)"
+                                @blur="showsValidation.touch(`shows.${index}.endTimes.premiere`)"
+                            >
+                                <input
+                                    v-bind="attrs"
+                                    v-model="show.endTimes.premiere"
+                                    class="field__input"
+                                    type="time"
                                 />
                             </BaseField>
                         </div>
@@ -448,9 +488,8 @@
             color: var(--color-ink-muted);
 
             &--on {
-                background: var(--color-surface);
-                color: var(--color-ink);
-                box-shadow: 0 8px 18px -14px var(--color-shadow);
+                background: var(--color-sage-deep);
+                color: var(--color-on-accent);
             }
         }
 
@@ -476,6 +515,26 @@
         flex-direction: column;
         gap: var(--space-4);
         padding: var(--space-4);
+
+        &__identity {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-line);
+
+            h2 {
+                font: 600 28px/1.1 var(--font-serif);
+                overflow-wrap: anywhere;
+            }
+
+            p {
+                margin-top: 6px;
+                color: var(--color-ink-muted);
+                font-size: 12px;
+            }
+        }
 
         &__head {
             display: flex;
@@ -513,6 +572,18 @@
         .editor__head {
             flex-direction: column;
             align-items: stretch;
+        }
+    }
+</style>
+
+<style lang="scss">
+    .admin {
+        .editor,
+        .promo-edit,
+        .empty {
+            border-radius: 16px;
+            background: var(--color-card-paper);
+            box-shadow: none;
         }
     }
 </style>

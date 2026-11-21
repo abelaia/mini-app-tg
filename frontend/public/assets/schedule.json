@@ -38,9 +38,9 @@
         {
             "id": "pod-zemley",
             "title": "Под землей",
-            "translator": "Диана",
+            "translator": "Сама Коркмаз",
             "day": "wednesday",
-            "platform": "vk",
+            "platform": "ivi",
             "icon": "layers",
             "times": {
                 "repeat": "20:00",
@@ -85,10 +85,10 @@
         },
         {
             "id": "polovina-mareri",
-            "title": "Половина марери",
-            "translator": "Сабина",
+            "title": "Половина матери",
+            "translator": "Сабина Гардашова",
             "day": "tuesday",
-            "platform": "vk",
+            "platform": "ivi",
             "icon": "layers",
             "times": {
                 "repeat": "20:00",
@@ -101,7 +101,7 @@
             "title": "Еще 17",
             "translator": "Сюзанна Каладжан",
             "day": "sunday",
-            "platform": "vk",
+            "platform": "ivi",
             "icon": "sparkle",
             "times": {
                 "repeat": "20:00",
@@ -114,7 +114,7 @@
             "title": "Клюквенный шербет",
             "translator": "Пакиза Азизовна",
             "day": "friday",
-            "platform": "vk",
+            "platform": "ivi",
             "icon": "rose",
             "times": {
                 "repeat": "20:00",
