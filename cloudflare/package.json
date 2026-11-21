@@ -1,0 +1,20 @@
+{
+    "name": "turkdizi-worker",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test": "node --test test/*.test.mjs",
+        "dev": "cf dev --mode preview",
+        "build": "cf build --mode preview",
+        "build:production": "cf build --mode production",
+        "deploy": "cf deploy --mode preview",
+        "deploy:production": "cf deploy --mode production"
+    },
+    "devDependencies": {
+        "@cloudflare/vite-plugin": "^2.0.0-rc.3",
+        "@vitejs/plugin-vue": "^6.0.10",
+        "cf": "^1.0.0-rc.2",
+        "sass-embedded": "^1.105.1",
+        "vite": "^8.3.8"
+    }
+}
