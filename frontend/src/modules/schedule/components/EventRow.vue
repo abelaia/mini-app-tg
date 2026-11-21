@@ -4,6 +4,7 @@
     import { mod } from '@/shared/lib/text'
     import content from '../content.json'
     import { eventStatus } from '../lib/eventStatus'
+    import { broadcastDuration } from '../lib/broadcastTiming'
 
     const props = defineProps({
         show: { type: Object, required: true },
@@ -14,7 +15,14 @@
     const clock = computed(() => props.show.times[props.kind])
     const meta = computed(() => content.kinds[props.kind])
     const status = computed(() =>
-        props.nowMinutes === null ? null : eventStatus(clock.value, props.nowMinutes),
+        props.nowMinutes === null
+            ? null
+            : eventStatus(
+                  clock.value,
+                  props.nowMinutes,
+                  props.show.endTimes?.[props.kind],
+                  broadcastDuration(props.kind),
+              ),
     )
 </script>
 
@@ -83,6 +91,17 @@
         &__status {
             font-size: var(--fs-xs);
             color: var(--color-ink-muted);
+        }
+
+        &--live {
+            margin-inline: -10px;
+            padding-inline: 10px;
+            border-radius: 10px;
+            background: color-mix(in srgb, var(--color-rose) 8%, transparent);
+        }
+
+        &--live &__time {
+            color: var(--color-rose);
         }
 
         &--live &__status {

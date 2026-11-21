@@ -105,8 +105,24 @@
         gap: var(--space-5);
 
         &__list {
-            @include card;
-            padding: var(--space-1) var(--space-4);
+            padding: 4px 18px;
+            border-radius: 16px;
+            border: 1px solid var(--color-line);
+            background: var(--color-card-paper);
+        }
+
+        .empty {
+            border-radius: 16px;
+            background: var(--color-card-paper);
+            box-shadow: none;
+            background-image:
+                linear-gradient(
+                    color-mix(in srgb, var(--color-card-paper) 94%, transparent),
+                    color-mix(in srgb, var(--color-card-paper) 94%, transparent)
+                ),
+                url('/assets/backgrounds/reminders.webp');
+            background-size: cover;
+            background-position: center;
         }
 
         &__clear {

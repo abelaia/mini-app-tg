@@ -5,6 +5,7 @@ import { DatabaseSync } from 'node:sqlite'
 import test from 'node:test'
 import worker from '../src/index.mjs'
 import { setupTelegram } from '../src/telegram-setup.mjs'
+import { webhookSecret } from '../src/telegram-auth.mjs'
 
 export function database() {
     const sqlite = new DatabaseSync(':memory:')
@@ -54,6 +55,73 @@ export function database() {
 }
 
 const token = 'test-bot-token'
+
+test('start greeting sends the selected custom emoji in HTML', async (context) => {
+    const DB = database()
+    const sent = []
+    context.mock.method(globalThis, 'fetch', async (_url, options) => {
+        sent.push(JSON.parse(options.body))
+        return Response.json({ ok: true })
+    })
+    try {
+        const response = await worker.fetch(
+            new Request('https://example.com/api/telegram/webhook', {
+                method: 'POST',
+                headers: { 'X-Telegram-Bot-Api-Secret-Token': await webhookSecret(token) },
+                body: JSON.stringify({
+                    message: {
+                        text: '/start',
+                        chat: { id: 12345, type: 'private' },
+                        from: { id: 12345 },
+                    },
+                }),
+            }),
+            { DB, BOT_TOKEN: token, WEBAPP_URL: 'https://example.com' },
+        )
+        assert.equal(response.status, 200)
+        assert.equal(sent.length, 1)
+        assert.equal(sent[0].parse_mode, 'HTML')
+        assert.ok(sent[0].text.includes('<tg-emoji emoji-id="5427232022252764138">❤️‍🔥</tg-emoji>'))
+        assert.ok(sent[0].text.includes('<tg-emoji emoji-id="5384206341256521018">🇹🇷</tg-emoji>'))
+        assert.equal(sent[0].reply_markup.inline_keyboard[0][0].web_app.url, 'https://example.com')
+    } finally {
+        DB.sqlite.close()
+    }
+})
+
+test('start greeting falls back to ordinary emoji if Telegram rejects custom emoji', async (context) => {
+    const DB = database()
+    const sent = []
+    context.mock.method(globalThis, 'fetch', async (_url, options) => {
+        sent.push(JSON.parse(options.body))
+        return Response.json(sent.length === 1 ? { ok: false, error_code: 400 } : { ok: true })
+    })
+    try {
+        const response = await worker.fetch(
+            new Request('https://example.com/api/telegram/webhook', {
+                method: 'POST',
+                headers: { 'X-Telegram-Bot-Api-Secret-Token': await webhookSecret(token) },
+                body: JSON.stringify({
+                    message: {
+                        text: '/start',
+                        chat: { id: 12345, type: 'private' },
+                        from: { id: 12345 },
+                    },
+                }),
+            }),
+            { DB, BOT_TOKEN: token },
+        )
+        assert.equal(response.status, 200)
+        assert.equal(sent.length, 2)
+        assert.equal(sent[1].parse_mode, undefined)
+        assert.equal(
+            sent[1].text,
+            'Привет! Это TürkDiziOnline ❤️‍🔥\n\nЗдесь расписание онлайн-переводов турецких сериалов 🇹🇷\nВключи напоминания, и я напишу перед началом эфира ☺️',
+        )
+    } finally {
+        DB.sqlite.close()
+    }
+})
 
 test('Telegram setup connects webhook and menu without exposing the bot token', async () => {
     const DB = database()

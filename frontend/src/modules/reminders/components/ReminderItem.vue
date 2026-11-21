@@ -26,7 +26,11 @@
                     :size="13"
                 />
                 {{ scheduleContent.days[show.day].short }} ·
-                {{ scheduleContent.kinds[kind].title }} · {{ show.times[kind] }}
+                {{ scheduleContent.kinds[kind].title }}
+            </p>
+            <p class="reminder__timing">
+                <time>{{ show.times[kind] }}</time>
+                <span>МСК</span>
             </p>
         </div>
         <button
@@ -69,10 +73,28 @@
         &__meta {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 5px;
-            margin-top: 2px;
+            margin-top: 6px;
             font-size: var(--fs-xs);
             color: var(--color-ink-muted);
+        }
+
+        &__timing {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-top: 8px;
+            color: var(--color-sage-deep);
+
+            time {
+                font: 600 25px/1 var(--font-serif);
+                font-variant-numeric: tabular-nums;
+            }
+
+            span {
+                font-size: 10px;
+            }
         }
 
         &__remove {
@@ -80,9 +102,10 @@
             @include press(0.88);
             display: grid;
             place-items: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            border-radius: 12px;
             background: var(--color-surface-muted);
             color: var(--color-ink-soft);
         }

@@ -25,7 +25,7 @@ export const useScheduleStore = defineStore('schedule', () => {
         shows.value = data.shows
         platforms.value = data.platforms
         timezone.value = data.timezone
-        remindBeforeMinutes.value = data.remindBeforeMinutes
+        remindBeforeMinutes.value = data.remindBeforeMinutes ?? 10
         promo.value = data.promo ?? null
         status.value = 'ready'
     }

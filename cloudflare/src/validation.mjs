@@ -72,6 +72,21 @@ export function validateSchedule(value) {
         if (Object.keys(show?.times ?? {}).some((kind) => !['repeat', 'premiere'].includes(kind))) {
             fields[`${key}.times`] = 'Неизвестный тип показа'
         }
+        if (show?.endTimes != null) {
+            if (typeof show.endTimes !== 'object' || Array.isArray(show.endTimes)) {
+                fields[`${key}.endTimes`] = 'Укажите время окончания показа'
+            } else {
+                for (const [kind, end] of Object.entries(show.endTimes)) {
+                    if (!['repeat', 'premiere'].includes(kind)) {
+                        fields[`${key}.endTimes`] = 'Неизвестный тип показа'
+                    } else if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(end ?? '')) {
+                        fields[`${key}.endTimes.${kind}`] = 'Укажите время от 00:00 до 23:59'
+                    } else if (end === show.times?.[kind]) {
+                        fields[`${key}.endTimes.${kind}`] = 'Окончание должно отличаться от начала'
+                    }
+                }
+            }
+        }
         if (show?.enabled !== undefined && typeof show.enabled !== 'boolean') {
             fields[`${key}.enabled`] = 'Некорректное состояние'
         }

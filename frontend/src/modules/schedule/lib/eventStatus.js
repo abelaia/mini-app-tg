@@ -1,9 +1,8 @@
 import app from '@/shared/content/app.json'
 import { fill } from '@/shared/lib/text'
-import { splitDuration, toMinutes } from '@/shared/lib/time'
+import { splitDuration } from '@/shared/lib/time'
 import content from '../content.json'
-
-const LIVE_WINDOW = 60
+import { broadcastTiming } from './broadcastTiming'
 
 function formatDuration(total) {
     const { hours, minutes } = splitDuration(total)
@@ -13,10 +12,13 @@ function formatDuration(total) {
     return parts.join(' ')
 }
 
-export function eventStatus(clock, nowMinutes) {
-    const diff = toMinutes(clock) - nowMinutes
-    if (diff > 0)
-        return { state: 'soon', label: fill(content.status.soon, { time: formatDuration(diff) }) }
-    if (diff > -LIVE_WINDOW) return { state: 'live', label: content.status.live }
-    return { state: 'done', label: content.status.done }
+export function eventStatus(clock, nowMinutes, endClock, durationMinutes) {
+    const timing = broadcastTiming(clock, nowMinutes, endClock, durationMinutes)
+    if (timing.state === 'soon') {
+        return {
+            state: 'soon',
+            label: fill(content.status.soon, { time: formatDuration(timing.untilStart) }),
+        }
+    }
+    return { state: timing.state, label: content.status[timing.state] }
 }

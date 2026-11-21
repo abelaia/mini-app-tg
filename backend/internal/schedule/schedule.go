@@ -44,6 +44,7 @@ type Show struct {
     Platform   string          `json:"platform"`
     Icon       string          `json:"icon"`
     Times      map[Kind]string `json:"times"`
+    EndTimes   map[Kind]string `json:"endTimes,omitempty"`
     Enabled    *bool           `json:"enabled,omitempty"`
 }
 
@@ -107,6 +108,14 @@ func (s *Schedule) init() error {
             }
             if _, err := time.Parse("15:04", clock); err != nil {
                 return fmt.Errorf("schedule: show %q has bad time %q", show.ID, clock)
+            }
+        }
+        for kind, clock := range show.EndTimes {
+            if !kind.Valid() {
+                return fmt.Errorf("schedule: show %q has unknown end time kind %q", show.ID, kind)
+            }
+            if _, err := time.Parse("15:04", clock); err != nil || len(clock) != 5 || clock == show.Times[kind] {
+                return fmt.Errorf("schedule: show %q has bad end time %q", show.ID, clock)
             }
         }
         s.byID[show.ID] = show
