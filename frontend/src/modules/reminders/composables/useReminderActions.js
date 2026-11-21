@@ -1,5 +1,6 @@
 import { useToast } from '@/shared/composables/useToast'
 import { fill } from '@/shared/lib/text'
+import { isPreview } from '@/shared/lib/environment'
 import { confirm, haptic, requestWriteAccess } from '@/shared/telegram/telegram'
 import { useScheduleStore } from '@/modules/schedule/store'
 import content from '../content.json'
@@ -17,7 +18,7 @@ export function useReminderActions() {
 
     async function enable(showId, kind) {
         haptic.tap()
-        if (!(await requestWriteAccess())) {
+        if (!isPreview && !(await requestWriteAccess())) {
             haptic.warning()
             toast.show(content.toasts.denied, { tone: 'error', duration: 3600 })
             return
@@ -25,6 +26,13 @@ export function useReminderActions() {
         try {
             await reminders.add(showId, kind)
             haptic.success()
+            if (isPreview) {
+                toast.show('Добавлено в тестовый список. Сообщения в Telegram не отправляются.', {
+                    tone: 'success',
+                    duration: 4000,
+                })
+                return
+            }
             toast.show(fill(content.toasts.on, { title: schedule.showById[showId]?.title ?? '' }), {
                 tone: 'success',
             })

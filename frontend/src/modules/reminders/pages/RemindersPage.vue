@@ -6,6 +6,7 @@
     import SectionHeading from '@/shared/ui/SectionHeading.vue'
     import { useNow } from '@/shared/composables/useNow'
     import { fill } from '@/shared/lib/text'
+    import { isPreview } from '@/shared/lib/environment'
     import { dayOffset } from '@/shared/lib/time'
     import { useScheduleStore } from '@/modules/schedule/store'
     import scheduleContent from '@/modules/schedule/content.json'
@@ -41,7 +42,9 @@
     )
 
     const subtitle = computed(() =>
-        fill(content.subtitle, { minutes: schedule.remindBeforeMinutes }),
+        isPreview
+            ? 'Тестовый список сохраняется в этом браузере. Сообщения в Telegram не отправляются.'
+            : fill(content.subtitle, { minutes: schedule.remindBeforeMinutes }),
     )
 
     const retry = () => Promise.all([reminders.load(), schedule.load()])
