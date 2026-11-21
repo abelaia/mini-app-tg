@@ -62,7 +62,7 @@ jobs:
 
             - name: Publish selected environment
               if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-              run: npx cf deploy --prebuilt --mode "$DEPLOY_MODE"
+              run: npx cf deploy --prebuilt --mode "$DEPLOY_MODE" --force
               working-directory: cloudflare
               env:
                   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
