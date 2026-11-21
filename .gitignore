@@ -10,6 +10,10 @@ backend/server.exe
 .DS_Store
 *.db
 *.db-*
+**/.wrangler/
+**/.cloudflare/
+.dev.vars
+.dev.vars.*
 .pgdata/
 
 # Local design notes and visual checks
